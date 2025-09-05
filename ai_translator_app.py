@@ -11,26 +11,26 @@ st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="cen
 st.markdown("""
 <style>
 body, [data-testid="stAppViewContainer"] {background:linear-gradient(135deg,#fff8f1 0%,#ffe5d1 100%);color:#4a4030;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-.container {background:#fffaf3;border-radius:22px;padding:46px 52px 40px;max-width:720px;margin:48px auto 64px;box-shadow:0 15px 50px rgba(255,135,0,0.35);border:1.8px solid #ffd8a0;}
-.header {display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.header-title {font-size:2.8rem;font-weight:800;color:#e66c02;letter-spacing:0.04em;}
-.header-badge {background-color:#ff7f23;color:white;font-weight:700;padding:7px 26px;font-size:1.15rem;border-radius:16px;box-shadow:0 0 28px #ffB84eaa;}
-.subtitle {margin-top:6px;margin-bottom:38px;font-weight:600;font-size:1.22rem;color:#a15303cc;}
-textarea {font-size:1.17rem !important;line-height:1.5 !important;padding:20px !important;background-color:#fff6e9 !important;color:#7a4d00 !important;border-radius:16px !important;border:2px solid #ffaf52 !important;min-height:110px !important;resize:vertical !important;}
-textarea:focus {outline:none !important;background-color:#fff5db !important;border-color:#ff8a1e !important;box-shadow:0 0 14px 5px #ff9c1e95 !important;}
-.swap-btn {width:50px;height:50px;background:#ff7f23;font-size:28px;color:white;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:auto;transition:transform 0.24s ease,box-shadow 0.24s ease;box-shadow:0 0 12px #ffb14dcc;}
-.swap-btn:hover {transform:scale(1.18);box-shadow:0 0 28px #ffb14ddd;}
-.action-btn {background:linear-gradient(90deg,#ff7d00,#ffb338);border-radius:18px;padding:16px 0;color:#522f00 !important;font-weight:700;font-size:1.28rem;border:none;width:100%;margin-top:22px;cursor:pointer;transition:background 0.3s ease,box-shadow 0.3s ease;box-shadow:0 7px 22px #ffa53bcc;}
-.action-btn:hover {background:linear-gradient(90deg,#e56e00,#db9f2d);box-shadow:0 12px 36px #ffb95bcc;}
-.clear-btn {background-color:#a6732cdd !important;color:#fbe9cd !important;font-size:1.05rem;font-weight:600;border-radius:14px;padding:10px 22px;border:none;cursor:pointer;margin-top:18px;}
+.container {background:#fffaf3;border-radius:22px;padding:36px 32px 32px;max-width:720px;margin:24px auto;box-shadow:0 10px 40px rgba(255,135,0,0.25);border:1.5px solid #ffd8a0;}
+.header {display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.header-title {font-size:2.4rem;font-weight:800;color:#e66c02;letter-spacing:0.04em;}
+.header-badge {background-color:#ff7f23;color:white;font-weight:700;padding:6px 22px;font-size:1.05rem;border-radius:14px;box-shadow:0 0 22px #ffB84eaa;}
+.subtitle {margin-top:4px;margin-bottom:28px;font-weight:600;font-size:1.18rem;color:#a15303cc;}
+textarea {font-size:1.15rem !important;line-height:1.5 !important;padding:16px !important;background-color:#fff6e9 !important;color:#7a4d00 !important;border-radius:14px !important;border:2px solid #ffaf52 !important;min-height:100px !important;resize:vertical !important;}
+textarea:focus {outline:none !important;background-color:#fff5db !important;border-color:#ff8a1e !important;box-shadow:0 0 12px 4px #ff9c1e95 !important;}
+.swap-btn {width:45px;height:45px;background:#ff7f23;font-size:26px;color:white;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:auto;transition:transform 0.22s ease,box-shadow 0.22s ease;box-shadow:0 0 10px #ffb14dcc;}
+.swap-btn:hover {transform:scale(1.15);box-shadow:0 0 24px #ffb14ddd;}
+.action-btn {background:linear-gradient(90deg,#ff7d00,#ffb338);border-radius:16px;padding:14px 0;color:#522f00 !important;font-weight:700;font-size:1.22rem;border:none;width:100%;margin-top:18px;cursor:pointer;transition:background 0.3s ease,box-shadow 0.3s ease;box-shadow:0 5px 18px #ffa53bcc;}
+.action-btn:hover {background:linear-gradient(90deg,#e56e00,#db9f2d);box-shadow:0 10px 28px #ffb95bcc;}
+.clear-btn {background-color:#a6732cdd !important;color:#fbe9cd !important;font-size:1rem;font-weight:600;border-radius:12px;padding:8px 20px;border:none;cursor:pointer;margin-top:14px;}
 .clear-btn:hover {background-color:#9e5c00cc !important;}
-.output-card {background:#fff9f0;border-radius:22px;box-shadow:0 16px 48px #ff9b2b5e;padding:32px 28px 28px;margin-bottom:34px;font-size:1.22rem;color:#7a4d00;line-height:1.6;position:relative;}
-.output-title {font-weight:800;font-size:1.36rem;margin-bottom:18px;color:#ff7f23;}
-.copy-btn {position:absolute;top:16px;right:16px;background:#ffb338;border:none;border-radius:12px;padding:6px 12px;font-size:0.9rem;color:#522f00;cursor:pointer;transition:filter 0.2s;}
+.output-box {background:#fff9f0;border-radius:18px;border:1.5px solid #ffb350;padding:24px 20px 20px;margin-bottom:20px;position:relative;font-size:1.18rem;color:#7a4d00;line-height:1.55;}
+.output-title {font-weight:700;font-size:1.3rem;margin-bottom:12px;color:#ff7f23;}
+.copy-btn {position:absolute;top:16px;right:16px;background:#ffb338;border:none;border-radius:10px;padding:5px 10px;font-size:0.85rem;color:#522f00;cursor:pointer;transition:filter 0.2s;}
 .copy-btn:hover {filter:brightness(1.15);}
-.copied-feedback {position:absolute;top:16px;right:72px;color:#ff7f23;font-weight:700;font-size:0.95rem;}
-.audio-title {font-size:1.38rem;font-weight:800;color:#ff9123;text-align:center;margin-bottom:22px;}
-@media (max-width:720px){.container{margin:24px 24px 48px;padding:32px 28px 24px;}.header-title{font-size:2.6rem;}.action-btn{font-size:1.16rem;}}
+.copied-feedback {position:absolute;top:16px;right:68px;color:#ff7f23;font-weight:700;font-size:0.9rem;}
+.audio-title {font-size:1.3rem;font-weight:700;color:#ff9123;text-align:center;margin-bottom:16px;}
+@media (max-width:720px){.container{margin:16px 16px 32px;padding:28px 24px 24px;}.header-title{font-size:2.2rem;}.action-btn{font-size:1.12rem;}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -94,7 +94,6 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 if translate_clicked and st.session_state.text_input.strip():
     with st.spinner("Translating…"):
-        # Raw translation only
         prompt_translate = f"Translate the following text from {st.session_state.source_lang} to {st.session_state.target_lang}. ONLY output raw translation:\n{st.session_state.text_input}"
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
@@ -113,9 +112,8 @@ if translate_clicked and st.session_state.text_input.strip():
 # ---------- Output with Copy ----------
 def output_with_copy(title, text, key_suffix):
     if text:
-        feedback = st.session_state.copy_feedback
         container_html = f"""
-        <div class="output-card">
+        <div class="output-box">
             <div class="output-title">{title}</div>
             {text}
             <button class="copy-btn" onclick="navigator.clipboard.writeText(`{text}`).then(() => {{
