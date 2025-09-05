@@ -6,7 +6,7 @@ import tempfile
 # ---------- Page Config ----------
 st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="centered")
 
-# ---------- CSS Styling ----------
+# ---------- CSS ----------
 st.markdown("""
 <style>
 body, [data-testid="stAppViewContainer"] {background: linear-gradient(135deg, #fff8f1 0%, #ffe5d1 100%); color: #4a4030; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
@@ -103,35 +103,3 @@ if translate_clicked:
             )
             st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Outputs ----------
-if st.session_state.translated_text:
-    st.markdown(f'''
-    <div class="output-card">
-        <div class="output-title">🌐 Translation</div>
-        {st.session_state.translated_text}
-        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.translated_text}`)">Copy</button>
-    </div>
-    ''', unsafe_allow_html=True)
-
-if st.session_state.phonetic_text:
-    st.markdown(f'''
-    <div class="output-card">
-        <div class="output-title">🔤 Phonetic</div>
-        {st.session_state.phonetic_text}
-        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.phonetic_text}`)">Copy</button>
-    </div>
-    ''', unsafe_allow_html=True)
-
-# ---------- Audio ----------
-if st.session_state.translated_text:
-    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
-    try:
-        tts_lang = lang_map.get(st.session_state.target_lang, "en")
-        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
-        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-        tts.save(tts_file.name)
-        st.audio(tts_file.name, format="audio/mp3")
-    except Exception as e:
-        st.error(f"Audio playback failed: {e}")
-
-st.markdown('</div>', unsafe_allow_html=True)
