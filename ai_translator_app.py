@@ -5,18 +5,20 @@ import openai
 # Configure Streamlit page
 st.set_page_config(page_title="AI Translator", page_icon="🌍", layout="centered")
 
-# Inject custom CSS
+# Modern CSS styling
 st.markdown("""
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
         .main-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #2563eb;
+            font-size: 2.8rem;
+            font-weight: 900;
             text-align: center;
-            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #2563eb, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.3rem;
         }
         .sub-title {
             text-align: center;
@@ -25,29 +27,45 @@ st.markdown("""
             margin-bottom: 2rem;
         }
         textarea {
-            border-radius: 12px !important;
+            border-radius: 14px !important;
             border: 1px solid #d1d5db !important;
+            font-size: 1rem !important;
+            padding: 0.8rem !important;
         }
         .result-card {
-            background: #f3f4f6; /* light gray background */
-            padding: 1.8rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            margin-top: 1.8rem;
+            background: linear-gradient(135deg, #f9fafb, #e0f2fe);
+            padding: 2rem;
+            border-radius: 18px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            margin-top: 2rem;
+            transition: all 0.3s ease-in-out;
+        }
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
         .translated-text {
-            font-size: 1.35rem;
-            color: #111827; /* dark text */
-            font-weight: 700;
+            font-size: 1.6rem;
+            color: #111827;
+            font-weight: 800;
             margin-bottom: 1rem;
+            text-align: center;
         }
         .phonetic {
-            font-size: 1.1rem;
-            color: #374151;
+            font-size: 1.15rem;
+            color: #0f766e;
             font-style: italic;
+            text-align: center;
         }
         .stAudio {
-            margin-top: 1rem;
+            margin-top: 1.2rem;
+        }
+        .translate-btn button {
+            background: linear-gradient(90deg, #2563eb, #06b6d4) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            border-radius: 12px !important;
+            padding: 0.6rem 1.4rem !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -102,13 +120,14 @@ with col1:
 with col2:
     target_lang = st.selectbox("🎯 Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 
-# Translate
+# Translate button with style
+st.markdown("<div class='translate-btn'>", unsafe_allow_html=True)
 if st.button("🚀 Translate"):
     if text_input.strip() == "":
         st.warning("⚠️ Please enter some text.")
     else:
         with st.spinner("Translating..."):
-            # Translation prompt (strict to avoid explanations)
+            # Translation prompt (strict output)
             translate_prompt = f"""
             Translate the following text from {source_lang} to {target_lang}.
             Return ONLY the translated text, nothing else:
@@ -130,7 +149,7 @@ if st.button("🚀 Translate"):
             )
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-        # Show results inside styled card
+        # Results in modern card
         st.markdown("<div class='result-card'>", unsafe_allow_html=True)
         st.markdown(f"<div class='translated-text'>{translated_text}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='phonetic'>🔤 {phonetic_text}</div>", unsafe_allow_html=True)
@@ -144,3 +163,4 @@ if st.button("🚀 Translate"):
             st.audio("output.mp3", format="audio/mp3")
         except Exception as e:
             st.error(f"❌ Speech generation failed: {e}")
+st.markdown("</div>", unsafe_allow_html=True)
