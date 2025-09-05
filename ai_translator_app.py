@@ -6,12 +6,12 @@ import openai
 st.set_page_config(page_title="AI Translator", page_icon="🌍", layout="centered")
 
 st.title("🌍 AI Translator")
-st.write("Translate text into different languages with phonetics and speech playback.")
+st.write("Translate between multiple languages with phonetics and speech playback.")
 
 # OpenAI API key (from Streamlit secrets)
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# Full language map for gTTS (common Indian + foreign languages)
+# Supported languages for gTTS
 lang_map = {
     # Indian Languages
     "Hindi": "hi",
@@ -26,7 +26,8 @@ lang_map = {
     "Urdu": "ur",
     "Odia": "or",
 
-    # Popular Foreign Languages
+    # Foreign Languages
+    "English": "en",
     "French": "fr",
     "Spanish": "es",
     "German": "de",
@@ -44,24 +45,29 @@ lang_map = {
     "Swedish": "sv",
 }
 
-# Input area
-text_input = st.text_area("Enter text to translate:", height=150)
-target_lang = st.selectbox("Choose target language:", list(lang_map.keys()))
+# Input fields
+text_input = st.text_area("Enter text:", height=150)
+
+col1, col2 = st.columns(2)
+with col1:
+    source_lang = st.selectbox("Input Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("English"))
+with col2:
+    target_lang = st.selectbox("Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 
 if st.button("Translate"):
     if text_input.strip() == "":
         st.warning("⚠️ Please enter some text.")
     else:
         with st.spinner("Translating..."):
-            # Get translation
-            translate_prompt = f"Translate the following text into {target_lang}: {text_input}"
+            # Translation prompt
+            translate_prompt = f"Translate the following text from {source_lang} to {target_lang}: {text_input}"
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": translate_prompt}]
             )
             translated_text = response.choices[0].message.content.strip()
 
-            # Get phonetic transcription
+            # Get phonetic transcription (romanized)
             phonetic_prompt = f"Provide the phonetic (romanized) transcription of this {target_lang} text: {translated_text}"
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
@@ -69,13 +75,13 @@ if st.button("Translate"):
             )
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-        # Display results
+        # Show results
         st.success(f"**Translated ({target_lang}):**")
         st.write(translated_text)
 
         st.info(f"🔤 Phonetic: {phonetic_text}")
 
-        # Generate TTS with gTTS (only read translated text)
+        # Generate speech only for translated text
         try:
             tts_lang = lang_map.get(target_lang, "en")
             tts = gTTS(text=translated_text, lang=tts_lang)
