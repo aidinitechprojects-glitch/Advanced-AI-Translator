@@ -26,6 +26,8 @@ textarea:focus { outline: none !important; background-color: #fff5db !important;
 .output-card { background: #fff9f0; border-radius: 18px; box-shadow: 0 12px 38px #ff9b2b5e; padding: 24px 20px 22px; margin-bottom: 28px; font-size: 1.05rem; color: #7a4d00; line-height: 1.5; }
 .output-title { font-weight: 700; font-size: 1.18rem; margin-bottom: 12px; color: #ff7f23; }
 .audio-title { font-size: 1.2rem; font-weight: 700; color: #ff9123; text-align: center; margin-bottom: 18px; }
+.copy-btn { background-color: #ffb338; color: #522f00; border-radius: 10px; border:none; padding:6px 14px; font-weight:600; cursor:pointer; margin-top:8px; }
+.copy-btn:hover { background-color:#ff9c1e; }
 @media (max-width: 720px) { .container { margin: 24px 24px 48px; padding: 28px 24px 20px; } .header-title { font-size: 2rem; } .action-btn { font-size: 1rem; } }
 </style>
 """, unsafe_allow_html=True)
@@ -104,8 +106,11 @@ if translate_clicked:
 # ---------- Outputs ----------
 if st.session_state.translated_text:
     st.markdown(f'<div class="output-card"><div class="output-title">🌐 Translation</div>{st.session_state.translated_text}</div>', unsafe_allow_html=True)
+    st.button("Copy Translation", key="copy_translation", on_click=lambda: st.experimental_set_query_params(copy=st.session_state.translated_text))
+
 if st.session_state.phonetic_text:
     st.markdown(f'<div class="output-card"><div class="output-title">🔤 Phonetic</div>{st.session_state.phonetic_text}</div>', unsafe_allow_html=True)
+    st.button("Copy Phonetic", key="copy_phonetic", on_click=lambda: st.experimental_set_query_params(copy=st.session_state.phonetic_text))
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
