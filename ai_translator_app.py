@@ -14,7 +14,7 @@ body, [data-testid="stAppViewContainer"] {background: linear-gradient(135deg, #f
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .header-title { font-size: 2.2rem; font-weight: 800; color: #e66c02; letter-spacing: 0.04em; }
 .header-badge { background-color: #ff7f23; color: white; font-weight: 700; padding: 5px 20px; font-size: 1rem; border-radius: 14px; box-shadow: 0 0 22px #ffB84eaa; }
-.subtitle { margin-top: 4px; margin-bottom: 28px; font-weight: 600; font-size: 1.05rem; color: #a15303cc; }
+.subtitle { margin-top: 4px; margin-bottom: 28px; font-weight: 600; font-size: 1.05rem; }
 textarea { font-size: 1.0rem !important; line-height: 1.4 !important; padding: 14px !important; background-color: #fff6e9 !important; color: #7a4d00 !important; border-radius: 14px !important; border: 2px solid #ffaf52 !important; min-height: 90px !important; resize: vertical !important;}
 textarea:focus { outline: none !important; background-color: #fff5db !important; border-color: #ff8a1e !important; box-shadow: 0 0 10px 4px #ff9c1e95 !important;}
 .swap-btn { width: 45px; height: 45px; background: #ff7f23; font-size: 24px; color: white; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: transform 0.24s ease, box-shadow 0.24s ease; box-shadow: 0 0 10px #ffb14dcc; }
@@ -85,8 +85,28 @@ if translate_clicked:
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
-            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. Only raw translated text, no explanation:\n{st.session_state.text_input}"
-            response = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": translate_prompt}])
+            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. ONLY raw translation, no explanation:\n{st.session_state.text_input}"
+            response = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": translate_prompt}]
+            )
             st.session_state.translated_text = response.choices[0].message.content.strip()
             phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
-            phonetic_resp = openai.chat.completions.create(model="gpt-4o
+            phonetic_resp = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": phonetic_prompt}]
+            )
+            st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
+
+# ---------- Outputs ----------
+if st.session_state.translated_text:
+    st.markdown(f'<div class="output-card"><div class="output-title">🌐 Translation</div>{st.session_state.translated_text}</div>', unsafe_allow_html=True)
+if st.session_state.phonetic_text:
+    st.markdown(f'<div class="output-card"><div class="output-title">🔤 Phonetic</div>{st.session_state.phonetic_text}</div>', unsafe_allow_html=True)
+
+# ---------- Audio ----------
+if st.session_state.translated_text:
+    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
+    try:
+        tts_lang = lang_map.get(st.session_state.target_lang, "en")
+        tts = gTTS(text=st.session_state.translated_text, lang=
