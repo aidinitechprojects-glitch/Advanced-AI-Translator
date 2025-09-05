@@ -5,81 +5,58 @@ import openai
 # Configure Streamlit page
 st.set_page_config(page_title="AI Translator", page_icon="🌍", layout="centered")
 
-# ---------- Custom CSS for Modern Look ----------
+# Inject custom CSS
 st.markdown("""
     <style>
-    body {
-        background-color: #f9fafb;
-    }
-    .main-title {
-        font-size: 2.3rem;
-        font-weight: bold;
-        text-align: center;
-        color: #2563eb;
-        margin-bottom: 0.3rem;
-    }
-    .sub-title {
-        text-align: center;
-        color: #4b5563;
-        font-size: 1.05rem;
-        margin-bottom: 2rem;
-    }
-    .stTextArea textarea {
-        border-radius: 12px;
-        border: 1px solid #d1d5db;
-        font-size: 1rem;
-        padding: 12px;
-    }
-    .stSelectbox [data-baseweb="select"] {
-        border-radius: 12px;
-    }
-    .stButton>button {
-        background-color: #2563eb;
-        color: white;
-        border-radius: 12px;
-        padding: 0.7rem 1.4rem;
-        font-size: 1rem;
-        font-weight: 500;
-        border: none;
-        transition: 0.2s;
-    }
-    .stButton>button:hover {
-        background-color: #1d4ed8;
-        transform: translateY(-2px);
-    }
-    .result-card {
-        background: white;
-        padding: 1.8rem;
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        margin-top: 1.8rem;
-    }
-    .result-title {
-        font-weight: 600;
-        color: #111827;
-        margin-bottom: 0.6rem;
-        font-size: 1.2rem;
-    }
-    .translated-text {
-        font-size: 1.25rem;
-        color: #111827;
-        margin-bottom: 0.8rem;
-        font-weight: 500;
-    }
-    .phonetic {
-        font-size: 1rem;
-        color: #10b981; /* green accent */
-        font-style: italic;
-        margin-bottom: 1rem;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .sub-title {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        textarea {
+            border-radius: 12px !important;
+            border: 1px solid #d1d5db !important;
+        }
+        .result-card {
+            background: #f3f4f6; /* light gray background */
+            padding: 1.8rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            margin-top: 1.8rem;
+        }
+        .translated-text {
+            font-size: 1.35rem;
+            color: #111827; /* dark text */
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .phonetic {
+            font-size: 1.1rem;
+            color: #374151;
+            font-style: italic;
+        }
+        .stAudio {
+            margin-top: 1rem;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# ---------- Page Content ----------
+# Title
 st.markdown("<div class='main-title'>🌍 AI Translator</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>Translate across languages with phonetics and audio playback</div>", unsafe_allow_html=True)
+st.markdown("<div class='sub-title'>Translate between multiple languages with phonetics and speech playback.</div>", unsafe_allow_html=True)
 
-# OpenAI API key (from Streamlit secrets)
+# OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Supported languages for gTTS
@@ -117,24 +94,24 @@ lang_map = {
 }
 
 # Input fields
-text_input = st.text_area("✍️ Enter text:", height=120)
+text_input = st.text_area("✍️ Enter text:", height=150)
 
 col1, col2 = st.columns(2)
 with col1:
-    source_lang = st.selectbox("🌐 Input Language", list(lang_map.keys()), index=list(lang_map.keys()).index("English"))
+    source_lang = st.selectbox("🌐 Input Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("English"))
 with col2:
-    target_lang = st.selectbox("🎯 Output Language", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
+    target_lang = st.selectbox("🎯 Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 
-# ---------- Translation Workflow ----------
+# Translate
 if st.button("🚀 Translate"):
     if text_input.strip() == "":
         st.warning("⚠️ Please enter some text.")
     else:
-        with st.spinner("🔄 Translating..."):
-            # Strict translation prompt
+        with st.spinner("Translating..."):
+            # Translation prompt (strict to avoid explanations)
             translate_prompt = f"""
             Translate the following text from {source_lang} to {target_lang}.
-            Return ONLY the translated text, no explanations, no extra words.
+            Return ONLY the translated text, nothing else:
 
             Input: {text_input}
             Output:
@@ -146,26 +123,20 @@ if st.button("🚀 Translate"):
             translated_text = response.choices[0].message.content.strip()
 
             # Phonetic transcription
-            phonetic_prompt = f"""
-            Provide ONLY the phonetic (romanized) transcription of this {target_lang} text.
-            No translations, no explanations. Just the phonetic string.
-
-            Text: {translated_text}
-            Phonetic:
-            """
+            phonetic_prompt = f"Provide the phonetic (romanized) transcription of this {target_lang} text: {translated_text}"
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": phonetic_prompt}]
             )
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-        # ---------- Result Card (Only After Translation) ----------
+        # Show results inside styled card
         st.markdown("<div class='result-card'>", unsafe_allow_html=True)
-        st.markdown(f"<div class='result-title'>✅ Translated to {target_lang}:</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='translated-text'>{translated_text}</div>", unsafe_allow_html=True)
-
         st.markdown(f"<div class='phonetic'>🔤 {phonetic_text}</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
+        # Speech synthesis
         try:
             tts_lang = lang_map.get(target_lang, "en")
             tts = gTTS(text=translated_text, lang=tts_lang)
@@ -173,5 +144,3 @@ if st.button("🚀 Translate"):
             st.audio("output.mp3", format="audio/mp3")
         except Exception as e:
             st.error(f"❌ Speech generation failed: {e}")
-
-        st.markdown("</div>", unsafe_allow_html=True)  # Close result card
