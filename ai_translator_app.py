@@ -56,7 +56,6 @@ lang_map = {
     "Marathi": "mr", "Punjabi": "pa", "Bengali": "bn", "Urdu": "ur", "Odia": "or"
 }
 sorted_langs = sorted(lang_map.keys())
-
 col1, col_swap, col2 = st.columns([3.7, 0.5, 3.7])
 with col1: st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
 with col_swap:
@@ -86,11 +85,38 @@ if translate_clicked:
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
-            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. Provide only the raw translated text:\n{st.session_state.text_input}"
+            # --- Translation ---
+            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. Only raw translated text, no explanation:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": translate_prompt}]
             )
             st.session_state.translated_text = response.choices[0].message.content.strip()
-            
-            phon
+
+            # --- Phonetic ---
+            phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
+            phonetic_resp = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": phonetic_prompt}]
+            )
+            st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
+
+# ---------- Outputs ----------
+if st.session_state.translated_text:
+    st.markdown(f'<div class="output-card"><div class="output-title">🌐 Translation</div>{st.session_state.translated_text}</div>', unsafe_allow_html=True)
+if st.session_state.phonetic_text:
+    st.markdown(f'<div class="output-card"><div class="output-title">🔤 Phonetic</div>{st.session_state.phonetic_text}</div>', unsafe_allow_html=True)
+
+# ---------- Audio Playback ----------
+if st.session_state.translated_text:
+    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
+    try:
+        tts_lang = lang_map.get(st.session_state.target_lang, "en")
+        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tts_file.name)
+        st.audio(tts_file.name, format="audio/mp3")
+    except Exception as e:
+        st.error(f"❌ Speech generation failed: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True)
