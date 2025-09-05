@@ -32,33 +32,34 @@ st.markdown("""
             font-size: 1rem !important;
             padding: 0.8rem !important;
         }
-        .result-card {
-            background: linear-gradient(135deg, #f9fafb, #e0f2fe);
-            padding: 2rem;
-            border-radius: 18px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-            margin-top: 2rem;
-            transition: all 0.3s ease-in-out;
+        .section-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 1.5rem;
         }
-        .result-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 0.8rem;
         }
         .translated-text {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             color: #111827;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            text-align: center;
+            font-weight: 700;
+            line-height: 1.6;
         }
-        .phonetic {
-            font-size: 1.15rem;
-            color: #0f766e;
+        .phonetic-text {
+            font-size: 1.2rem;
+            color: #047857;
             font-style: italic;
-            text-align: center;
+            line-height: 1.6;
         }
         .stAudio {
-            margin-top: 1.2rem;
+            margin-top: 1rem;
         }
         .translate-btn button {
             background: linear-gradient(90deg, #2563eb, #06b6d4) !important;
@@ -149,13 +150,21 @@ if st.button("🚀 Translate"):
             )
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-        # Results in modern card
-        st.markdown("<div class='result-card'>", unsafe_allow_html=True)
+        # Section 1: Translated Text
+        st.markdown("<div class='section-card'>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>📝 Translated Text</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='translated-text'>{translated_text}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='phonetic'>🔤 {phonetic_text}</div>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # Speech synthesis
+        # Section 2: Phonetic
+        st.markdown("<div class='section-card'>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>🔤 Phonetic (Romanized)</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='phonetic-text'>{phonetic_text}</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        # Section 3: Audio
+        st.markdown("<div class='section-card'>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>🔊 Listen</div>", unsafe_allow_html=True)
         try:
             tts_lang = lang_map.get(target_lang, "en")
             tts = gTTS(text=translated_text, lang=tts_lang)
@@ -163,4 +172,5 @@ if st.button("🚀 Translate"):
             st.audio("output.mp3", format="audio/mp3")
         except Exception as e:
             st.error(f"❌ Speech generation failed: {e}")
+        st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
