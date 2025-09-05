@@ -12,23 +12,23 @@ st.markdown("""
         background-color: #f9fafb;
     }
     .main-title {
-        font-size: 2.2rem;
+        font-size: 2.3rem;
         font-weight: bold;
         text-align: center;
         color: #2563eb;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
     }
     .sub-title {
         text-align: center;
         color: #4b5563;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         margin-bottom: 2rem;
     }
     .stTextArea textarea {
         border-radius: 12px;
         border: 1px solid #d1d5db;
         font-size: 1rem;
-        padding: 10px;
+        padding: 12px;
     }
     .stSelectbox [data-baseweb="select"] {
         border-radius: 12px;
@@ -37,30 +37,40 @@ st.markdown("""
         background-color: #2563eb;
         color: white;
         border-radius: 12px;
-        padding: 0.6rem 1.2rem;
+        padding: 0.7rem 1.4rem;
         font-size: 1rem;
+        font-weight: 500;
         border: none;
+        transition: 0.2s;
     }
     .stButton>button:hover {
         background-color: #1d4ed8;
+        transform: translateY(-2px);
     }
     .result-card {
         background: white;
-        padding: 1.5rem;
+        padding: 1.8rem;
         border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        margin-top: 1.5rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        margin-top: 1.8rem;
     }
     .result-title {
         font-weight: 600;
         color: #111827;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.6rem;
+        font-size: 1.2rem;
+    }
+    .translated-text {
+        font-size: 1.25rem;
+        color: #111827;
+        margin-bottom: 0.8rem;
+        font-weight: 500;
     }
     .phonetic {
-        font-size: 0.95rem;
-        color: #6b7280;
-        margin-top: 0.8rem;
+        font-size: 1rem;
+        color: #10b981; /* green accent */
         font-style: italic;
+        margin-bottom: 1rem;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -149,10 +159,10 @@ if st.button("🚀 Translate"):
             )
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-        # ---------- Result Card ----------
+        # ---------- Result Card (Only After Translation) ----------
         st.markdown("<div class='result-card'>", unsafe_allow_html=True)
-        st.markdown(f"<div class='result-title'>✅ Translated ({target_lang}):</div>", unsafe_allow_html=True)
-        st.write(translated_text)
+        st.markdown(f"<div class='result-title'>✅ Translated to {target_lang}:</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='translated-text'>{translated_text}</div>", unsafe_allow_html=True)
 
         st.markdown(f"<div class='phonetic'>🔤 {phonetic_text}</div>", unsafe_allow_html=True)
 
