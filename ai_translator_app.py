@@ -27,8 +27,6 @@ textarea:focus {outline:none !important; background-color:#fff5db !important; bo
 .clear-btn:hover{background-color:#9e5c00cc !important;}
 .output-card{background:#fff9f0; border-radius:18px; box-shadow:0 12px 38px #ff9b2b50; padding:22px 18px 18px; margin-bottom:24px; font-size:1rem; color:#7a4d00; position:relative;}
 .output-title{font-weight:700; font-size:1.1rem; margin-bottom:10px; color:#ff7f23;}
-.copy-btn{position:absolute; top:10px; right:10px; background:#ff7f23; color:white; border:none; border-radius:10px; padding:4px 10px; font-size:0.85rem; cursor:pointer;}
-.copy-btn:hover{background:#e66c02;}
 .audio-title{font-size:1.2rem; font-weight:700; color:#ff9123; text-align:center; margin-bottom:18px;}
 </style>
 """, unsafe_allow_html=True)
@@ -67,7 +65,7 @@ with col_swap:
 with col3:
     st.session_state.target_lang = st.selectbox("To", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
-# ---------- Input ----------
+# ---------- Text Input ----------
 st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=90, placeholder="Type or paste your text here...")
 
 # ---------- Buttons ----------
@@ -85,30 +83,27 @@ if translate_clicked:
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
-            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang} and provide only raw translated text, no explanations:\n{st.session_state.text_input}"
+            # RAW translation only
+            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang} and provide only the raw translated text, no explanations:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role":"user","content":translate_prompt}])
             st.session_state.translated_text = response.choices[0].message.content.strip()
-            phonetic_prompt = f"Provide phonetic (romanized) transcription of this text without extra explanation:\n{st.session_state.translated_text}"
+
+            phonetic_prompt = f"Provide phonetic (romanized) transcription of this text without any explanation:\n{st.session_state.translated_text}"
             phonetic_resp = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role":"user","content":phonetic_prompt}])
             st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Outputs ----------
+# ---------- Outputs with COPY ----------
+def output_with_copy(title, text):
+    st.markdown(f'<div class="output-card"><div class="output-title">{title}</div>{text}</div>', unsafe_allow_html=True)
+    if st.button(f"Copy {title}", key=f"copy_{title}"):
+        st.experimental_set_query_params()
+        st.clipboard_set(text)
+        st.success(f"✅ {title} copied!")
+
 if st.session_state.translated_text:
-    st.markdown(f'''
-    <div class="output-card">
-        <div class="output-title">🌐 Translation</div>
-        {st.session_state.translated_text}
-        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.translated_text}`).then(()=>{{alert('✅ Translation copied!')}})">Copy</button>
-    </div>
-    ''', unsafe_allow_html=True)
+    output_with_copy("🌐 Translation", st.session_state.translated_text)
 if st.session_state.phonetic_text:
-    st.markdown(f'''
-    <div class="output-card">
-        <div class="output-title">🔤 Phonetic</div>
-        {st.session_state.phonetic_text}
-        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.phonetic_text}`).then(()=>{{alert('✅ Phonetic copied!')}})">Copy</button>
-    </div>
-    ''', unsafe_allow_html=True)
+    output_with_copy("🔤 Phonetic", st.session_state.phonetic_text)
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
