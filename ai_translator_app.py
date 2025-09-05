@@ -21,16 +21,15 @@ if "phonetic_text" not in st.session_state:
 # ---------------- Custom CSS ----------------
 st.markdown("""
 <style>
-/* General body */
-body {background-color: #F5F5F5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body {background-color: #F4F4F9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
 
 /* Header */
 .app-header {text-align: center; font-size: 3rem; font-weight: 900; color: #FF6B00; margin-bottom: 5px;}
-.subtitle {text-align: center; font-size: 1.4rem; font-weight: 500; color: #444444; margin-bottom: 25px;}
+.subtitle {text-align: center; font-size: 1.5rem; font-weight: 500; color: #555555; margin-bottom: 25px;}
 
 /* Input text area */
 .stTextArea>div>textarea {
-    background-color: #FFFFFF; color: #333333; font-size: 16px; border-radius: 12px; padding: 10px; max-height: 200px; overflow-y: auto;
+    background-color: #FFFFFF; color: #222222; font-size: 16px; border-radius: 12px; padding: 12px; max-height: 200px; overflow-y: auto;
     transition: all 0.3s ease;
 }
 .stTextArea>div>textarea:focus {
@@ -40,25 +39,32 @@ body {background-color: #F5F5F5; font-family: 'Segoe UI', Tahoma, Geneva, Verdan
 /* Buttons */
 .stButton>button {font-weight: bold; border-radius: 12px; cursor:pointer; transition: all 0.3s ease;}
 .translate-button {
-    background: linear-gradient(90deg,#FF6B00,#FF3C00); color: #FFFFFF; width: 250px; height: 50px; font-size:18px; margin:auto; display:block;
+    background: linear-gradient(90deg,#FF6B00,#FF3C00); color: #FFFFFF; width: 280px; height: 55px; font-size:20px; margin:auto; display:block;
 }
 .translate-button:hover {
     filter: brightness(1.2);
-    box-shadow: 0 4px 15px rgba(255,107,0,0.6);
+    box-shadow: 0 6px 20px rgba(255,107,0,0.6);
 }
 .swap-button {background: #00BFFF; color: #FFFFFF; font-size:16px; height:40px; width:40px;}
 .clear-button {background: #555555; color: #FFFFFF; font-size:14px; height:35px; width:80px; float:right; margin-top:5px;}
 
 /* Output Boxes */
 .output-box {
-    background: #FFFFFF; border-radius: 12px; padding: 15px; margin-bottom: 15px; transition: all 0.3s ease;
+    background: #FFFFFF; border-radius: 15px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
 }
 .output-box:hover {background-color: #FFF7EE;}
-.output-heading {font-weight: 700; font-size: 16px; color: #FF6B00; margin-bottom: 5px;}
-.output-text {font-size: 14px; color: #333333; max-height: 150px; overflow-y: auto;}
+.output-heading {font-weight: 700; font-size: 16px; color: #FF6B00; margin-bottom: 5px; font-family:'Segoe UI', Tahoma;}
+.output-text {font-size: 14px; color: #222222; max-height: 180px; overflow-y: auto; font-family:'Segoe UI', Tahoma;}
 
 /* Audio Section */
 .audio-title {font-weight: 700; font-size: 16px; margin-bottom: 10px; color: #FF6B00; text-align:center;}
+
+/* Dropdown Styling */
+.css-1kyxreq .css-1n76uvr {
+    font-size: 15px;
+    color: #222222;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -81,6 +87,9 @@ lang_map = {
     "Swedish": "sv",
 }
 
+# Sort languages alphabetically
+sorted_langs = sorted(lang_map.keys())
+
 # ---------------- Input Section ----------------
 st.session_state.text_input = st.text_area("Enter your text:", value=st.session_state.text_input, height=150)
 
@@ -94,16 +103,16 @@ if st.button("Clear", key="clear"):
 # ---------------- Language Selection and Swap ----------------
 col1, col2, col3 = st.columns([4,1,4])
 with col1:
-    st.session_state.source_lang = st.selectbox("Input Language:", list(lang_map.keys()), index=list(lang_map.keys()).index(st.session_state.source_lang))
+    st.session_state.source_lang = st.selectbox("Input Language:", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
 with col2:
     if st.button("⇄", key="swap", help="Swap languages"):
         st.session_state.source_lang, st.session_state.target_lang = st.session_state.target_lang, st.session_state.source_lang
         st.experimental_rerun()
 with col3:
-    st.session_state.target_lang = st.selectbox("Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index(st.session_state.target_lang))
+    st.session_state.target_lang = st.selectbox("Output Language:", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
 # ---------------- Translate Button (Center, Pro UI) ----------------
-translate_clicked = st.button("Translate", key="translate", help="Translate text", args=None)
+translate_clicked = st.button("Translate", key="translate")
 if translate_clicked:
     if st.session_state.text_input.strip() == "":
         st.warning("⚠️ Please enter some text.")
