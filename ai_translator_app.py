@@ -67,14 +67,17 @@ st.markdown("""
 
         /* Text styles */
         .translated-text {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #1e293b;
-            line-height: 1.6;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #2563eb, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+            margin-bottom: 1rem;
         }
         .phonetic-text {
             font-size: 1.3rem;
-            font-weight: 600;
+            font-weight: 700;
             color: #047857;
             line-height: 1.6;
         }
