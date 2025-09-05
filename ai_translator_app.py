@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 # ---------- Page Config ----------
 st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="centered")
 
-# ---------- CSS Styling (Improved UI) ----------
+# ---------- CSS Styling (with output box) ----------
 st.markdown("""
 <style>
 body, [data-testid="stAppViewContainer"] {
@@ -122,12 +122,23 @@ textarea:focus {
 .clear-btn:hover {
     background-color: #9e5c00cc !important;
 }
+
+/* New Output Box Container */
+.output-box {
+    background: #fff1d6;
+    border-radius: 20px;
+    border: 1.5px solid #ffb847;
+    padding: 24px 28px 26px;
+    margin-bottom: 36px;
+    box-shadow: 0 4px 14px #ffbb6650;
+}
+
+/* Inside output cards */
 .output-card {
-    background: #fff9f0;
-    border-radius: 22px;
-    box-shadow: 0 16px 48px #ff9b2b5e;
-    padding: 32px 28px 28px;
-    margin-bottom: 34px;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 20px;
     font-size: 1.22rem;
     color: #7a4d00;
     line-height: 1.6;
@@ -136,7 +147,7 @@ textarea:focus {
 .output-title {
     font-weight: 800;
     font-size: 1.36rem;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
     color: #ff7f23;
 }
 .copy-btn {
@@ -207,7 +218,7 @@ lang_map = {
 }
 sorted_langs = sorted(lang_map.keys())
 
-col1, col_swap, col3 = st.columns([3.7,0.5,3.7])
+col1, col_swap, col3 = st.columns([3.7, 0.5, 3.7])
 
 with col1:
     st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
@@ -226,7 +237,7 @@ with col3:
 st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=120, placeholder="Type or paste your text here...")
 
 # ---------- Action Buttons ----------
-clear_col, translate_col = st.columns([1,5])
+clear_col, translate_col = st.columns([1, 5])
 with clear_col:
     if st.button("Clear", key="clear"):
         st.session_state.text_input = ""
@@ -259,7 +270,8 @@ if translate_clicked and st.session_state.text_input.strip():
 def output_with_copy(title, text, key_suffix):
     if text:
         container_html = f"""
-        <div class="output-card">
+        <div class="output-box">
+            <div class="output-card">
             <div class="output-title">{title}</div>
             {text}
             <button class="copy-btn" onclick="navigator.clipboard.writeText(`{text}`).then(() => {{
@@ -268,9 +280,10 @@ def output_with_copy(title, text, key_suffix):
                 setTimeout(()=>{{fb.style.display='none';}},1500);
             }})">Copy</button>
             <span id="feedback_{key_suffix}" class="copied-feedback">Copied!</span>
+            </div>
         </div>
         """
-        components.html(container_html, height=160, scrolling=False)
+        components.html(container_html, height=180, scrolling=False)
 
 output_with_copy("🌐 Translation", st.session_state.translated_text, "trans")
 output_with_copy("🔤 Phonetic", st.session_state.phonetic_text, "phon")
