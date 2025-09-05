@@ -5,33 +5,43 @@ import openai
 # Configure Streamlit page
 st.set_page_config(page_title="AI Translator", page_icon="🌍", layout="centered")
 
-# Modern CSS styling with colored headers
+# Modern CSS styling
 st.markdown("""
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
+        /* Title styling */
         .main-title {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: 900;
             text-align: center;
-            background: linear-gradient(90deg, #2563eb, #06b6d4);
+            margin-bottom: 0.2rem;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6, #9333ea);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.3rem;
+        }
+        .logo {
+            font-size: 3.2rem;
+            display: inline-block;
+            margin-right: 0.5rem;
         }
         .sub-title {
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: #6b7280;
             margin-bottom: 2rem;
         }
+
+        /* Input box */
         textarea {
             border-radius: 14px !important;
             border: 1px solid #d1d5db !important;
             font-size: 1rem !important;
             padding: 0.8rem !important;
         }
+
+        /* Section card */
         .section-card {
             background: #ffffff;
             border-radius: 14px;
@@ -49,10 +59,11 @@ st.markdown("""
         .section-body {
             padding: 1.2rem;
         }
-        /* Colored headers */
-        .header-translate { background: #2563eb; }
-        .header-phonetic { background: #059669; }
-        .header-audio { background: #9333ea; }
+
+        /* Gradient headers */
+        .header-translate { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .header-phonetic { background: linear-gradient(90deg, #10b981, #84cc16); }
+        .header-audio { background: linear-gradient(90deg, #9333ea, #ec4899); }
 
         /* Text styles */
         .translated-text {
@@ -64,25 +75,32 @@ st.markdown("""
         .phonetic-text {
             font-size: 1.3rem;
             font-weight: 600;
-            color: #065f46;
+            color: #047857;
             line-height: 1.6;
         }
         .stAudio {
             margin-top: 0.5rem;
         }
+
+        /* Translate button */
         .translate-btn button {
             background: linear-gradient(90deg, #2563eb, #06b6d4) !important;
             color: white !important;
             font-weight: 600 !important;
             border-radius: 12px !important;
             padding: 0.6rem 1.4rem !important;
+            transition: all 0.3s ease-in-out;
+        }
+        .translate-btn button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.15);
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown("<div class='main-title'>🌍 AI Translator</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>Translate between multiple languages with phonetics and speech playback.</div>", unsafe_allow_html=True)
+# Title with emoji logo
+st.markdown("<div class='logo'>🌍</div><div class='main-title'>AI Translator</div>", unsafe_allow_html=True)
+st.markdown("<div class='sub-title'>Your multilingual companion with phonetics & speech playback ✨</div>", unsafe_allow_html=True)
 
 # OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -110,14 +128,14 @@ with col1:
 with col2:
     target_lang = st.selectbox("🎯 Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 
-# Translate button with style
+# Translate button
 st.markdown("<div class='translate-btn'>", unsafe_allow_html=True)
 if st.button("🚀 Translate"):
     if text_input.strip() == "":
         st.warning("⚠️ Please enter some text.")
     else:
         with st.spinner("Translating..."):
-            # Translation prompt (strict output)
+            # Translation prompt
             translate_prompt = f"""
             Translate the following text from {source_lang} to {target_lang}.
             Return ONLY the translated text, nothing else:
