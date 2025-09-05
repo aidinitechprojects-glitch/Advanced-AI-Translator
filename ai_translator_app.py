@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 # ---------- Page Config ----------
 st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="centered")
 
-# ---------- CSS Styling ----------
+# ---------- CSS ----------
 st.markdown("""
 <style>
 body, [data-testid="stAppViewContainer"] {background: linear-gradient(135deg, #fff8f1 0%, #ffe5d1 100%); color: #4a4030; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
@@ -101,13 +101,4 @@ if translate_clicked:
             phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text without explanations:\n{st.session_state.translated_text}"
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": phonetic_prompt}]
-            )
-            st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
-
-# ---------- Helper: Output with Copy using JS ----------
-def output_with_copy(title, text):
-    html_code = f"""
-    <div class="output-card">
-        <div class="output-title">{title}</div>
-        <textarea id="{
+               
