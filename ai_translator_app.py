@@ -57,12 +57,14 @@ lang_map = {
 }
 sorted_langs = sorted(lang_map.keys())
 col1, col_swap, col2 = st.columns([3.7, 0.5, 3.7])
-with col1: st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
+with col1:
+    st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
 with col_swap:
-    if st.button("⇄", key="swap", help="Swap languages"): 
+    if st.button("⇄", key="swap", help="Swap languages"):
         st.session_state.source_lang, st.session_state.target_lang = st.session_state.target_lang, st.session_state.source_lang
         st.experimental_rerun()
-with col2: st.session_state.target_lang = st.selectbox("To", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
+with col2:
+    st.session_state.target_lang = st.selectbox("To", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
 # ---------- Text Input ----------
 st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=100, placeholder="Type or paste your text here...")
@@ -88,25 +90,4 @@ if translate_clicked:
             translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. ONLY raw translation, no explanation:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": translate_prompt}]
-            )
-            st.session_state.translated_text = response.choices[0].message.content.strip()
-            phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
-            phonetic_resp = openai.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": phonetic_prompt}]
-            )
-            st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
-
-# ---------- Outputs ----------
-if st.session_state.translated_text:
-    st.markdown(f'<div class="output-card"><div class="output-title">🌐 Translation</div>{st.session_state.translated_text}</div>', unsafe_allow_html=True)
-if st.session_state.phonetic_text:
-    st.markdown(f'<div class="output-card"><div class="output-title">🔤 Phonetic</div>{st.session_state.phonetic_text}</div>', unsafe_allow_html=True)
-
-# ---------- Audio ----------
-if st.session_state.translated_text:
-    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
-    try:
-        tts_lang = lang_map.get(st.session_state.target_lang, "en")
-        tts = gTTS(text=st.session_state.translated_text, lang=
+                messages=[{"role": "user", "content
