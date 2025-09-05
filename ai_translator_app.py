@@ -8,44 +8,226 @@ st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="cen
 
 st.markdown("""
 <style>
-body, [data-testid="stAppViewContainer"] {background:linear-gradient(120deg,#ece9f3 60%,#fff8ed 115%);}
-.pro-glass {background:rgba(255,255,255,0.92);border-radius:28px;box-shadow:0 12px 56px 0 #bf7cf328, 0 0.5px 2px #00000012;padding:38px 38px 30px 38px;margin:28px 0 0 0;}
-.pro-header {display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
-.pro-title {font-size:2.4rem;font-weight:900;letter-spacing:.03em;background:linear-gradient(90deg,#ff7a18,#af002d 70%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.pro-badge {font-size:1.05rem;background:linear-gradient(90deg,#af002d,#ff7a18 95%);color:#fff;border-radius:8px;padding:4px 20px;margin-left:16px;font-weight:500;box-shadow:0 1px 7px #af002d22;}
-.pro-subtitle {font-size:1.13rem;color:#2b2542;font-weight:500;text-align:left;margin-bottom:24px;margin-top:4px;}
-textarea {background:rgba(255,245,230,0.97)!important;border-radius:19px!important;font-size:1.11rem;color:#222!important;border:2px solid #ffd6b7!important;box-shadow:0 4px 24px #ff7a1812;}
-textarea:focus {border:2.5px solid #ff7a18!important;background:#fff9f0!important;}
-.pro-swap-btn {width:44px;height:44px;background:linear-gradient(90deg,#3a86ff,#ff7a18);color:#fff;border-radius:50%;font-size:1.25rem;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px #ff7a1810;transition:filter .2s;}
-.pro-swap-btn:hover {filter:brightness(1.13);}
-.pro-btn {width:100%;padding:.7em 0;margin-top:13px;background:linear-gradient(90deg,#af002d,#ff7a18 75%);color:#fff;border:none;border-radius:13px;font-size:1.17rem;font-weight:bold;box-shadow:0 5px 18px #ff7a1825;transition:filter .18s,box-shadow .13s;}
-.pro-btn:hover {filter:brightness(1.13);}
-.clear-btn {background:#857fa4cc!important;color:#fff!important;border-radius:11px;font-size:15px;margin:7px 0 17px 0;}
-.pro-out-card {background:rgba(255,245,230,0.98);border-radius:17px;padding:19px 16px 12px 16px;box-shadow:0 3px 13px #ff7a1817;margin-bottom:17px;}
-.pro-out-title {font-weight:700;font-size:1.047rem;letter-spacing:.01em;color:#af002d;}
-.pro-out {font-size:1.07rem;color:#1d1728;}
-.audio-title {font-weight:700;font-size:1.11rem;color:#ff7a18;text-align:center;margin-bottom:8px;}
+/* Background gradient */
+body, [data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #1a2238 0%, #4e5d78 100%);
+    color: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Glass container */
+.pro-glass {
+    background: rgba(30, 38, 60, 0.85);
+    border-radius: 25px;
+    box-shadow: 0 20px 40px rgba(10, 14, 38, 0.7);
+    padding: 40px 48px 36px;
+    margin: 32px auto 48px;
+    max-width: 720px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.06);
+    transition: box-shadow 0.3s ease;
+}
+.pro-glass:hover {
+    box-shadow: 0 30px 60px rgba(10, 14, 38, 0.9);
+}
+
+/* Header */
+.pro-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.pro-title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.08em;
+}
+.pro-badge {
+    background: #0072ff;
+    font-weight: 700;
+    color: #fff;
+    padding: 7px 22px;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 16px rgba(0, 114, 255, 0.46);
+    user-select: none;
+}
+.pro-subtitle {
+    color: #b8c1e2;
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+}
+
+/* Selectboxes */
+.stSelectbox > div:first-child {
+    font-size: 1.18rem;
+    font-weight: 600;
+    color: #add8ff;
+}
+.stSelectbox > div[role="listbox"] > div {
+    font-size: 1.1rem;
+    color: #d1d9ff;
+}
+
+/* Textarea */
+textarea {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #e0e9ff !important;
+    font-size: 1.15rem !important;
+    border-radius: 18px !important;
+    border: 1.8px solid rgba(255, 255, 255, 0.3) !important;
+    padding: 18px !important;
+    min-height: 98px !important;
+    box-shadow: inset 0 0 15px rgba(0, 114, 255, 0.3);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+textarea:focus {
+    border: 2.5px solid #00b4ff !important;
+    background-color: rgba(6, 71, 197, 0.25) !important;
+    outline: none !important;
+}
+
+/* Swap Button */
+.pro-swap-btn {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 26px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    box-shadow: 0 6px 12px rgba(0, 198, 255, 0.6);
+}
+
+.pro-swap-btn:hover {
+    transform: scale(1.14);
+    box-shadow: 0 9px 20px rgba(0, 198, 255, 0.9);
+}
+
+/* Buttons */
+.pro-btn {
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 1.28rem;
+    border-radius: 16px;
+    padding: 14px 0;
+    width: 100%;
+    border: none;
+    box-shadow: 0 8px 24px rgba(0, 198, 255, 0.45);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+.pro-btn:hover {
+    background: linear-gradient(90deg, #005bb5, #008de4);
+    box-shadow: 0 12px 32px rgba(0, 180, 255, 0.8);
+}
+
+/* Clear Button */
+.clear-btn {
+    background: #3a4284cc !important;
+    color: #e0e9ff !important;
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 8px 18px;
+    font-size: 1.05rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.23s ease;
+    margin-top: 14px;
+}
+
+.clear-btn:hover {
+    background: #5e65c9cc !important;
+}
+
+/* Output Cards */
+.pro-out-card {
+    background: rgba(16, 28, 64, 0.75);
+    border-radius: 20px;
+    padding: 26px 22px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px rgba(0, 114, 255, 0.33);
+    font-size: 1.15rem;
+    color: #c9d1ff;
+    user-select: text;
+    transition: background-color 0.35s ease;
+}
+
+.pro-out-card:hover {
+    background-color: rgba(16, 28, 64, 0.9);
+}
+
+.pro-out-title {
+    color: #00b4ff;
+    font-weight: 700;
+    font-size: 1.21rem;
+    margin-bottom: 10px;
+    user-select: none;
+}
+
+/* Audio Title */
+.audio-title {
+    color: #00c6ff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 16px;
+}
+
+/* Responsive columns */
+@media (max-width: 640px) {
+    .pro-glass {
+        padding: 28px 30px 24px;
+        margin: 16px 12px 36px;
+    }
+    .pro-title {
+        font-size: 2.5rem;
+    }
+    .pro-subtitle {
+        font-size: 1rem;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- Session State ----------
+# --------- Session State Initialization ---------
 if "source_lang" not in st.session_state: st.session_state.source_lang = "English"
 if "target_lang" not in st.session_state: st.session_state.target_lang = "Hindi"
 if "text_input" not in st.session_state: st.session_state.text_input = ""
 if "translated_text" not in st.session_state: st.session_state.translated_text = ""
 if "phonetic_text" not in st.session_state: st.session_state.phonetic_text = ""
 
-# ---------- Header ----------
+# --------- Header Section ---------
 st.markdown("""
-<div class='pro-header'>
-  <span class='pro-title'>AI Translator</span>
-  <span class='pro-badge'>PRO</span>
+<div class="pro-header">
+    <div class="pro-title">AI Translator Pro</div>
+    <div class="pro-badge">PRO</div>
 </div>
 """, unsafe_allow_html=True)
-st.markdown("<div class='pro-subtitle'>Translate text across languages with phonetics & audio playback</div>", unsafe_allow_html=True)
+
+st.markdown('<div class="pro-subtitle">Translate text across languages with phonetics & audio playback, now with a sleek modern interface.</div>', unsafe_allow_html=True)
+
 st.markdown('<div class="pro-glass">', unsafe_allow_html=True)
 
-# ---------- Language Selection, Swap ----------
+# --------- Language Selection with Swap Button ---------
 lang_map = {
     "English":"en","French":"fr","Spanish":"es","German":"de","Italian":"it","Portuguese":"pt",
     "Russian":"ru","Japanese":"ja","Korean":"ko","Chinese (Mandarin)":"zh-cn","Arabic":"ar",
@@ -55,34 +237,45 @@ lang_map = {
 }
 sorted_langs = sorted(lang_map.keys())
 
-col1, col2, col3 = st.columns([3.5,1,3.5])
+col1, col_swap, col3 = st.columns([3.6, 0.7, 3.6])
+
 with col1:
     st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
-with col2:
-    st.markdown('<div style="height:38px;"></div>', unsafe_allow_html=True)
+
+with col_swap:
+    st.markdown('<div style="margin-top:18px;">', unsafe_allow_html=True)
     if st.button("⇆", key="swap", help="Swap languages"):
         st.session_state.source_lang, st.session_state.target_lang = st.session_state.target_lang, st.session_state.source_lang
         st.experimental_rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
 with col3:
     st.session_state.target_lang = st.selectbox("To", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
-# ---------- Input Text ----------
-st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=94, placeholder="Type or paste something...")
+# --------- Text Input with Clear & Translate Buttons ---------
+st.session_state.text_input = st.text_area(
+    "Text to translate",
+    value=st.session_state.text_input,
+    height=100,
+    placeholder="Type or paste your text here...")
 
-clear_col, translate_col = st.columns([1,5])
-with clear_col:
-    if st.button("Clear", key="clear"):
+btn_clear, btn_translate = st.columns([1,5])
+
+with btn_clear:
+    if st.button("Clear", key="clear", help="Clear input"):
         st.session_state.text_input = ""
         st.session_state.translated_text = ""
         st.session_state.phonetic_text = ""
         st.experimental_rerun()
-with translate_col:
-    translate_clicked = st.button("Translate", key="translate", help="Translate now", use_container_width=True)
 
-# ---------- Translation Logic ----------
+with btn_translate:
+    translate_clicked = st.button("Translate", key="translate", help="Translate text")
+
+# --------- Translation Logic ---------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
+
 if translate_clicked:
-    if st.session_state.text_input.strip() == "":
+    if not st.session_state.text_input.strip():
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
@@ -92,6 +285,7 @@ if translate_clicked:
                 messages=[{"role": "user", "content": translate_prompt}]
             )
             st.session_state.translated_text = response.choices[0].message.content.strip()
+
             phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
@@ -99,16 +293,23 @@ if translate_clicked:
             )
             st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Output ----------
+# --------- Outputs ---------
 if st.session_state.translated_text:
-    st.markdown(f"""<div class="pro-out-card"><span class="pro-out-title">🌐 Translation</span>
-    <div class="pro-out">{st.session_state.translated_text}</div></div>""", unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="pro-out-card">'
+        f'<div class="pro-out-title">🌐 Translation</div>'
+        f'<div>{st.session_state.translated_text}</div>'
+        f'</div>', unsafe_allow_html=True)
+
 if st.session_state.phonetic_text:
-    st.markdown(f"""<div class="pro-out-card"><span class="pro-out-title">🔤 Phonetic</span>
-    <div class="pro-out">{st.session_state.phonetic_text}</div></div>""", unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="pro-out-card">'
+        f'<div class="pro-out-title">🔤 Phonetic</div>'
+        f'<div>{st.session_state.phonetic_text}</div>'
+        f'</div>', unsafe_allow_html=True)
 
 if st.session_state.translated_text:
-    st.markdown('<div class="audio-title">🔊 Audio</div>', unsafe_allow_html=True)
+    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
     try:
         tts_lang = lang_map.get(st.session_state.target_lang, "en")
         tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
@@ -118,4 +319,4 @@ if st.session_state.translated_text:
     except Exception as e:
         st.error(f"❌ Speech generation failed: {e}")
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
