@@ -121,4 +121,6 @@ if st.session_state.translated_text:
         tts.save(tts_file.name)
         st.audio(tts_file.name, format="audio/mp3")
     except Exception as e:
-       
+        st.error(f"❌ Speech generation failed: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True)
