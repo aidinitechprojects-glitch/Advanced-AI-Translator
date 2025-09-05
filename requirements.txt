@@ -9,3 +9,4 @@ httpcore==0.17.0
 setuptools
 streamlit-webrtc==0.47.7
 av==10.0.0
+rich==13.9.2
