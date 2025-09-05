@@ -5,7 +5,7 @@ import openai
 # Configure Streamlit page
 st.set_page_config(page_title="AI Translator", page_icon="🌍", layout="centered")
 
-# Modern CSS styling
+# Modern CSS styling with colored headers
 st.markdown("""
     <style>
         body {
@@ -33,33 +33,42 @@ st.markdown("""
             padding: 0.8rem !important;
         }
         .section-card {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            padding: 1.5rem;
+            background: #ffffff;
             border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
             margin-top: 1.5rem;
+            padding: 0;
+            overflow: hidden;
         }
-        .section-title {
-            font-size: 1.2rem;
+        .section-header {
+            padding: 0.8rem 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 0.8rem;
+            color: #ffffff;
         }
+        .section-body {
+            padding: 1.2rem;
+        }
+        /* Colored headers */
+        .header-translate { background: #2563eb; }
+        .header-phonetic { background: #059669; }
+        .header-audio { background: #9333ea; }
+
+        /* Text styles */
         .translated-text {
-            font-size: 1.5rem;
-            color: #111827;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1e293b;
             line-height: 1.6;
         }
         .phonetic-text {
-            font-size: 1.2rem;
-            color: #047857;
-            font-style: italic;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #065f46;
             line-height: 1.6;
         }
         .stAudio {
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
         .translate-btn button {
             background: linear-gradient(90deg, #2563eb, #06b6d4) !important;
@@ -81,35 +90,15 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 # Supported languages for gTTS
 lang_map = {
     # Indian Languages
-    "Hindi": "hi",
-    "Tamil": "ta",
-    "Telugu": "te",
-    "Kannada": "kn",
-    "Malayalam": "ml",
-    "Gujarati": "gu",
-    "Marathi": "mr",
-    "Punjabi": "pa",
-    "Bengali": "bn",
-    "Urdu": "ur",
-    "Odia": "or",
+    "Hindi": "hi", "Tamil": "ta", "Telugu": "te", "Kannada": "kn",
+    "Malayalam": "ml", "Gujarati": "gu", "Marathi": "mr", "Punjabi": "pa",
+    "Bengali": "bn", "Urdu": "ur", "Odia": "or",
 
     # Foreign Languages
-    "English": "en",
-    "French": "fr",
-    "Spanish": "es",
-    "German": "de",
-    "Italian": "it",
-    "Portuguese": "pt",
-    "Russian": "ru",
-    "Japanese": "ja",
-    "Korean": "ko",
-    "Chinese (Mandarin)": "zh-cn",
-    "Arabic": "ar",
-    "Turkish": "tr",
-    "Dutch": "nl",
-    "Greek": "el",
-    "Polish": "pl",
-    "Swedish": "sv",
+    "English": "en", "French": "fr", "Spanish": "es", "German": "de",
+    "Italian": "it", "Portuguese": "pt", "Russian": "ru", "Japanese": "ja",
+    "Korean": "ko", "Chinese (Mandarin)": "zh-cn", "Arabic": "ar",
+    "Turkish": "tr", "Dutch": "nl", "Greek": "el", "Polish": "pl", "Swedish": "sv",
 }
 
 # Input fields
@@ -152,19 +141,20 @@ if st.button("🚀 Translate"):
 
         # Section 1: Translated Text
         st.markdown("<div class='section-card'>", unsafe_allow_html=True)
-        st.markdown("<div class='section-title'>📝 Translated Text</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='translated-text'>{translated_text}</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-header header-translate'>📝 Translated Text</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='section-body'><div class='translated-text'>{translated_text}</div></div>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Section 2: Phonetic
         st.markdown("<div class='section-card'>", unsafe_allow_html=True)
-        st.markdown("<div class='section-title'>🔤 Phonetic (Romanized)</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='phonetic-text'>{phonetic_text}</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-header header-phonetic'>🔤 Phonetic (Romanized)</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='section-body'><div class='phonetic-text'>{phonetic_text}</div></div>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Section 3: Audio
         st.markdown("<div class='section-card'>", unsafe_allow_html=True)
-        st.markdown("<div class='section-title'>🔊 Listen</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-header header-audio'>🔊 Listen</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-body'>", unsafe_allow_html=True)
         try:
             tts_lang = lang_map.get(target_lang, "en")
             tts = gTTS(text=translated_text, lang=tts_lang)
@@ -172,5 +162,5 @@ if st.button("🚀 Translate"):
             st.audio("output.mp3", format="audio/mp3")
         except Exception as e:
             st.error(f"❌ Speech generation failed: {e}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div></div>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
