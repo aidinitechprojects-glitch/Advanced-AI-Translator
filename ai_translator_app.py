@@ -9,53 +9,86 @@ st.set_page_config(page_title="🌍 AI Translator", page_icon="🤖", layout="ce
 # ---------------- Custom CSS ----------------
 st.markdown("""
 <style>
+/* Body */
 body {
-    background-color: #121212;
+    background: #0F0F1F;
     color: #ECF0F1;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-h1 {
-    font-weight: 800;
-    font-size: 2.5rem;
-    color: #FFFFFF;
-}
-.output-box {
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
-    margin-bottom: 20px;
-}
-.output-heading {
-    font-weight: bold;
-    font-size: 18px;
+
+/* Title Bar */
+.app-title {
+    text-align: center;
+    font-size: 2.8rem;
+    font-weight: 900;
     background: linear-gradient(90deg, #FF8C00, #FF2D95);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
 }
-.stButton>button {
-    background: linear-gradient(90deg, #FF8C00, #FF2D95);
-    color: white;
-    font-weight: bold;
-    border-radius: 12px;
-    height: 50px;
-    width: 100%;
+
+/* Subtitle */
+.subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #AAB2BD;
+    margin-bottom: 30px;
 }
+
+/* Text Area */
 .stTextArea>div>textarea {
     background-color: #1E1E2F;
     color: #ECF0F1;
     font-size: 16px;
     border-radius: 12px;
+    padding: 10px;
+}
+
+/* Gradient Button */
+.stButton>button {
+    background: linear-gradient(90deg, #FF8C00, #FF2D95);
+    color: white;
+    font-weight: bold;
+    border-radius: 15px;
+    height: 50px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+.stButton>button:hover {
+    transform: scale(1.03);
+}
+
+/* Output Boxes */
+.output-box {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.6);
+    margin-bottom: 20px;
+}
+
+/* Gradient Headings for Outputs */
+.output-heading {
+    font-weight: 700;
+    font-size: 18px;
+    background: linear-gradient(90deg, #FF8C00, #FF2D95);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+/* Text inside output box */
+.output-text {
+    font-size: 18px;
+    color: #ECF0F1;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------- Page Header ----------------
-st.markdown("""
-<h1 style="text-align:center;">🤖 AI Translator</h1>
-<p style="text-align:center; font-size:18px; color:#AAB2BD;">
-Translate your text across languages with phonetics & audio playback
-</p>
-""", unsafe_allow_html=True)
+st.markdown('<div class="app-title">🤖 AI Translator</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Translate text across languages with phonetics & audio playback</div>', unsafe_allow_html=True)
 
 # ---------------- OpenAI API Key ----------------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -74,7 +107,6 @@ lang_map = {
 
 # ---------------- Input Fields ----------------
 text_input = st.text_area("Enter your text:", height=150)
-
 col1, col2 = st.columns(2)
 with col1:
     source_lang = st.selectbox("Input Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("English"))
@@ -104,15 +136,13 @@ if st.button("Translate"):
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
         # ---------------- Display Outputs ----------------
-        st.markdown(f"<div class='output-box' style='background:#2C3E50;'>"
-                    f"<div class='output-heading'>🌐 Translated ({target_lang}):</div>"
-                    f"<span style='color:#ECF0F1; font-size:20px;'>{translated_text}</span></div>",
-                    unsafe_allow_html=True)
+        st.markdown(f'<div class="output-box">'
+                    f'<div class="output-heading">🌐 Translated ({target_lang}):</div>'
+                    f'<div class="output-text">{translated_text}</div></div>', unsafe_allow_html=True)
 
-        st.markdown(f"<div class='output-box' style='background:#2C3E50;'>"
-                    f"<div class='output-heading'>🔤 Phonetic:</div>"
-                    f"<span style='color:#ECF0F1; font-size:18px;'>{phonetic_text}</span></div>",
-                    unsafe_allow_html=True)
+        st.markdown(f'<div class="output-box">'
+                    f'<div class="output-heading">🔤 Phonetic:</div>'
+                    f'<div class="output-text">{phonetic_text}</div></div>', unsafe_allow_html=True)
 
         # ---------------- Generate Audio ----------------
         try:
