@@ -28,7 +28,6 @@ textarea:focus {border:2.5px solid #ff7a18!important;background:#fff9f0!importan
 .pro-out {font-size:1.07rem;color:#1d1728;margin-bottom:8px;}
 .copy-btn {position:absolute;top:16px;right:16px;background:#ff7a18;color:white;border:none;padding:5px 12px;border-radius:8px;cursor:pointer;}
 .copy-btn:hover {background:#e56e00;}
-.copy-status {position:absolute;top:16px;right:90px;color:#228B22;font-weight:600;}
 .audio-title {font-weight:700;font-size:1.11rem;color:#ff7a18;text-align:center;margin-bottom:8px;}
 </style>
 """, unsafe_allow_html=True)
@@ -88,15 +87,14 @@ with translate_col:
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 if translate_clicked and st.session_state.text_input.strip():
     with st.spinner("Translating…"):
-        translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}:\n{st.session_state.text_input}"
+        translate_prompt = f"{st.session_state.text_input}"
         response = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role":"user","content":translate_prompt}])
         st.session_state.translated_text = response.choices[0].message.content.strip()
-        phonetic_prompt = f"{st.session_state.translated_text}"
-        phonetic_resp = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role":"user","content":phonetic_prompt}])
+        phonetic_resp = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role":"user","content":st.session_state.translated_text}])
         st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Function to show output with inline copy inside the same box ----------
-def output_with_copy(title, text, key):
+# ---------- Output with Inline Copy ----------
+def output_with_copy(title, text):
     if text:
         html_code = f"""
         <div class="pro-out-card">
@@ -110,13 +108,17 @@ def output_with_copy(title, text, key):
         """
         components.html(html_code, height=130)
 
-# ---------- Display Outputs ----------
-output_with_copy("🌐 Translation", st.session_state.translated_text, "translation_box")
-output_with_copy("🔤 Phonetic", st.session_state.phonetic_text, "phonetic_box")
+output_with_copy("🌐 Translation", st.session_state.translated_text)
+output_with_copy("🔤 Phonetic", st.session_state.phonetic_text)
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
     st.markdown('<div class="audio-title">🔊 Audio</div>', unsafe_allow_html=True)
     try:
         tts_lang = lang_map.get(st.session_state.target_lang, "en")
-        tts = gTTS(text=st.session
+        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tts_file.name)
+        st.audio(tts_file.name, format="audio/mp3")
+    except Exception as e:
+       
