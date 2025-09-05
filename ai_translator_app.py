@@ -24,9 +24,10 @@ textarea:focus {outline:none !important; background-color:#fff5db !important; bo
 .action-btn:hover {background:linear-gradient(90deg,#e56e00,#db9f2d);}
 .clear-btn {background-color:#a6732cdd !important; color:#fbe9cd !important; font-size:0.95rem; font-weight:600; border-radius:12px; padding:8px 18px; border:none; cursor:pointer; margin-top:12px;}
 .clear-btn:hover {background-color:#9e5c00cc !important;}
-.output-card {background:#fff9f0; border-radius:18px; box-shadow:0 10px 28px #ff9b2b5e; padding:22px 18px 18px; margin-bottom:22px; font-size:1rem; color:#7a4d00; line-height:1.5;}
+.output-card {background:#fff9f0; border-radius:18px; box-shadow:0 10px 28px #ff9b2b5e; padding:22px 18px 18px; margin-bottom:22px; font-size:1rem; color:#7a4d00; line-height:1.5; position:relative;}
 .output-title {font-weight:700; font-size:1.15rem; margin-bottom:10px; color:#ff7f23;}
 .audio-title {font-size:1.18rem; font-weight:700; color:#ff9123; text-align:center; margin-bottom:14px;}
+.copy-btn {position:absolute; top:16px; right:16px; background:#ff7f23; color:white; border:none; border-radius:6px; padding:4px 10px; font-size:0.85rem; cursor:pointer;}
 @media (max-width:720px) {.container {margin:24px 24px 40px; padding:28px 24px 20px;} .header-title{font-size:2rem;} .action-btn{font-size:1rem;}}
 </style>
 """, unsafe_allow_html=True)
@@ -37,6 +38,7 @@ if "target_lang" not in st.session_state: st.session_state.target_lang = "Hindi"
 if "text_input" not in st.session_state: st.session_state.text_input = ""
 if "translated_text" not in st.session_state: st.session_state.translated_text = ""
 if "phonetic_text" not in st.session_state: st.session_state.phonetic_text = ""
+if "copy_notification" not in st.session_state: st.session_state.copy_notification = ""
 
 # ---------- Header ----------
 st.markdown(f"""
@@ -82,7 +84,7 @@ with clear_col:
 with translate_col:
     translate_clicked = st.button("Translate", key="translate", help="Translate text", use_container_width=True)
 
-# ---------- Translation Logic ----------
+# ---------- Translation ----------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 if translate_clicked:
@@ -90,8 +92,8 @@ if translate_clicked:
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
-            # --- Raw translation only ---
-            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang} without adding any explanations:\n{st.session_state.text_input}"
+            # Raw translation only
+            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang} without explanations:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": translate_prompt}]
@@ -103,41 +105,4 @@ if translate_clicked:
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": phonetic_prompt}]
             )
-            st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
-
-# ---------- Output Helper with Copy Button ----------
-def output_with_copy(title, text, key_suffix):
-    st.markdown(f'''
-        <div class="output-card">
-            <div class="output-title">{title}</div>
-            <div style="position:relative;">
-                {text}
-                <button style="
-                    position:absolute; top:0px; right:0px; padding:2px 8px; font-size:0.8rem; 
-                    background:#ff7f23; color:white; border:none; border-radius:5px; cursor:pointer;"
-                    onclick="navigator.clipboard.writeText(`{text}`); alert('{title} copied!');">
-                    Copy
-                </button>
-            </div>
-        </div>
-    ''', unsafe_allow_html=True)
-
-# ---------- Display Outputs ----------
-if st.session_state.translated_text:
-    output_with_copy("🌐 Translation", st.session_state.translated_text, "translation")
-if st.session_state.phonetic_text:
-    output_with_copy("🔤 Phonetic", st.session_state.phonetic_text, "phonetic")
-
-# ---------- Audio ----------
-if st.session_state.translated_text:
-    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
-    try:
-        tts_lang = lang_map.get(st.session_state.target_lang, "en")
-        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
-        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-        tts.save(tts_file.name)
-        st.audio(tts_file.name, format="audio/mp3")
-    except Exception as e:
-        st.error(f"❌ Speech generation failed: {e}")
-
-st.markdown('</div>', unsafe_allow_html=True)
+            st.session_state.phon
