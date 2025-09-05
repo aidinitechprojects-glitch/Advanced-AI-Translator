@@ -30,12 +30,22 @@ body {
     margin-bottom: 5px;
 }
 
-/* Subtitle */
+/* Subtitle - Gradient & Glow Animation */
 .subtitle {
     text-align: center;
     font-size: 1.2rem;
-    color: #AAB2BD;
+    font-weight: 600;
+    background: linear-gradient(90deg, #00F0FF, #FF00FF, #FF8C00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glow 3s ease-in-out infinite alternate;
     margin-bottom: 30px;
+}
+
+@keyframes glow {
+    0% { text-shadow: 0 0 5px #00F0FF, 0 0 10px #FF00FF; }
+    50% { text-shadow: 0 0 10px #FF8C00, 0 0 20px #FF00FF; }
+    100% { text-shadow: 0 0 5px #00F0FF, 0 0 15px #FF8C00; }
 }
 
 /* Text Area */
@@ -114,7 +124,7 @@ body {
 
 # ---------------- Page Header ----------------
 st.markdown('<div class="app-header">🤖 AI Translator</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Translate text across languages with phonetics & audio playback</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">🌐 AI-powered multilingual translator with phonetic transcription and natural speech playback</div>', unsafe_allow_html=True)
 
 # ---------------- OpenAI API Key ----------------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
