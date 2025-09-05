@@ -1,6 +1,4 @@
 streamlit
 openai
-pydub
 gTTS
-ffmpeg-python
-numpy
+pydub
