@@ -9,65 +9,37 @@ st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="cen
 # ---------- CSS ----------
 st.markdown("""
 <style>
-body, [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg,#fff8f1 0%,#ffe5d1 100%);
-    color:#4a4030;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.container {
-    background:#fffaf3;
-    border-radius:18px;
-    padding:16px 20px 16px;
-    max-width:720px;
-    margin:12px auto;
-    box-shadow:0 8px 30px rgba(255,135,0,0.25);
-    border:1.5px solid #ffd8a0;
-}
-.header {display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.container { background:#fffaf3; border-radius:18px; padding:16px; max-width:720px; margin:12px auto; box-shadow:0 8px 30px rgba(255,135,0,0.25); border:1.5px solid #ffd8a0;}
 .header-title {font-size:2rem;font-weight:800;color:#e66c02;}
-.header-badge {background-color:#ff7f23;color:white;font-weight:700;padding:4px 16px;font-size:1rem;border-radius:12px;box-shadow:0 0 18px #ffB84eaa;}
-.subtitle {margin-top:2px;margin-bottom:12px;font-weight:600;font-size:1.15rem;color:#a15303cc;}
+.header-badge {background-color:#ff7f23;color:white;padding:4px 16px;border-radius:12px;}
+.subtitle {margin:2px 0 12px;font-weight:600;font-size:1.15rem;color:#a15303cc;}
 textarea {font-size:1.12rem !important;line-height:1.4 !important;padding:10px !important;background-color:#fff6e9 !important;color:#7a4d00 !important;border-radius:12px !important;border:2px solid #ffaf52 !important;min-height:90px !important;resize:vertical !important;}
 textarea:focus {outline:none !important;background-color:#fff5db !important;border-color:#ff8a1e !important;box-shadow:0 0 10px 3px #ff9c1e95 !important;}
-.swap-btn {width:40px;height:40px;background:#ff7f23;font-size:24px;color:white;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:auto;transition:transform 0.22s ease,box-shadow 0.22s ease;box-shadow:0 0 10px #ffb14dcc;}
-.swap-btn:hover {transform:scale(1.15);box-shadow:0 0 22px #ffb14ddd;}
-.action-btn {background:linear-gradient(90deg,#ff7d00,#ffb338);border-radius:16px;padding:12px 0;color:#522f00 !important;font-weight:700;font-size:1.15rem;border:none;width:100%;margin-top:12px;cursor:pointer;transition:background 0.3s ease,box-shadow 0.3s ease;box-shadow:0 5px 15px #ffa53bcc;}
-.action-btn:hover {background:linear-gradient(90deg,#e56e00,#db9f2d);box-shadow:0 10px 28px #ffb95bcc;}
-.clear-btn {background-color:#a6732cdd !important;color:#fbe9cd !important;font-size:0.95rem;font-weight:600;border-radius:12px;padding:6px 18px;border:none;cursor:pointer;margin-top:10px;}
-.clear-btn:hover {background-color:#9e5c00cc !important;}
-.output-box {background:#fff9f0;border-radius:16px;border:1.8px solid #ffb350;padding:14px 14px 12px;margin-bottom:8px;position:relative;font-size:1.13rem;color:#7a4d00;line-height:1.45;}
+.output-box {background:#fff9f0;border-radius:16px;border:1.8px solid #ffb350;padding:14px;margin-bottom:8px;font-size:1.13rem;color:#7a4d00;line-height:1.45;position:relative;}
 .output-title {font-weight:700;font-size:1.2rem;margin-bottom:6px;color:#ff7f23;}
 .copy-feedback {color:#ff7f23;font-weight:700;font-size:0.9rem;margin-left:10px;}
 .audio-title {font-size:1.18rem;font-weight:700;color:#ff9123;text-align:center;margin-bottom:10px;}
-@media (max-width:720px){.container{margin:12px 12px 24px;padding:14px 14px 14px;}.header-title{font-size:1.8rem;}.action-btn{font-size:1.1rem;}}
 </style>
 """, unsafe_allow_html=True)
 
 # ---------- Session State ----------
-for key in ["source_lang", "target_lang", "text_input", "translated_text", "phonetic_text", "copy_feedback_translation", "copy_feedback_phonetic"]:
+for key in ["source_lang","target_lang","text_input","translated_text","phonetic_text","copy_feedback_translation","copy_feedback_phonetic"]:
     if key not in st.session_state:
         st.session_state[key] = ""
 
 # ---------- Header ----------
-st.markdown("""
-<div class="header">
-    <div class="header-title">AI Translator Pro</div>
-    <div class="header-badge">PRO</div>
-</div>
-""", unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Translate across languages with phonetics & audio playback.</div>', unsafe_allow_html=True)
 st.markdown('<div class="container">', unsafe_allow_html=True)
+st.markdown('<div class="header-title">AI Translator Pro</div><div class="header-badge">PRO</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Translate across languages with phonetics & audio playback.</div>', unsafe_allow_html=True)
 
 # ---------- Language Selection ----------
-lang_map = {
-    "English": "en", "French": "fr", "Spanish": "es", "German": "de", "Italian": "it", "Portuguese": "pt",
-    "Russian": "ru", "Japanese": "ja", "Korean": "ko", "Chinese (Mandarin)": "zh-cn", "Arabic": "ar",
-    "Turkish": "tr", "Dutch": "nl", "Greek": "el", "Polish": "pl", "Swedish": "sv",
-    "Hindi": "hi", "Tamil": "ta", "Telugu": "te", "Kannada": "kn", "Malayalam": "ml", "Gujarati": "gu",
-    "Marathi": "mr", "Punjabi": "pa", "Bengali": "bn", "Urdu": "ur", "Odia": "or"
-}
+lang_map = {"English":"en","French":"fr","Spanish":"es","German":"de","Italian":"it","Portuguese":"pt",
+            "Russian":"ru","Japanese":"ja","Korean":"ko","Chinese (Mandarin)":"zh-cn","Arabic":"ar",
+            "Turkish":"tr","Dutch":"nl","Greek":"el","Polish":"pl","Swedish":"sv",
+            "Hindi":"hi","Tamil":"ta","Telugu":"te","Kannada":"kn","Malayalam":"ml","Gujarati":"gu",
+            "Marathi":"mr","Punjabi":"pa","Bengali":"bn","Urdu":"ur","Odia":"or"}
 sorted_langs = sorted(lang_map.keys())
-col1, col_swap, col3 = st.columns([3.7,0.5,3.7])
+col1,col_swap,col3 = st.columns([3.7,0.5,3.7])
 with col1:
     st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
 with col_swap:
@@ -84,11 +56,8 @@ st.session_state.text_input = st.text_area("Text to translate", value=st.session
 clear_col, translate_col = st.columns([1,5])
 with clear_col:
     if st.button("Clear"):
-        st.session_state.text_input = ""
-        st.session_state.translated_text = ""
-        st.session_state.phonetic_text = ""
-        st.session_state.copy_feedback_translation = ""
-        st.session_state.copy_feedback_phonetic = ""
+        for key in ["text_input","translated_text","phonetic_text","copy_feedback_translation","copy_feedback_phonetic"]:
+            st.session_state[key] = ""
         st.experimental_rerun()
 with translate_col:
     translate_clicked = st.button("Translate")
@@ -97,6 +66,7 @@ with translate_col:
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 if translate_clicked and st.session_state.text_input.strip():
     with st.spinner("Translating…"):
+        # Translation
         translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. ONLY raw output:\n{st.session_state.text_input}"
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
@@ -104,6 +74,7 @@ if translate_clicked and st.session_state.text_input.strip():
         )
         st.session_state.translated_text = response.choices[0].message.content.strip()
 
+        # Phonetic
         phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text. ONLY raw output:\n{st.session_state.translated_text}"
         phonetic_resp = openai.chat.completions.create(
             model="gpt-4o-mini",
@@ -111,32 +82,28 @@ if translate_clicked and st.session_state.text_input.strip():
         )
         st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Output Box Function ----------
-def output_box(title, text, copy_feedback_key):
+# ---------- Output Box ----------
+def output_box(title,text,copy_key):
     if text:
         st.markdown(f'<div class="output-box"><div class="output-title">{title}</div>{text}</div>', unsafe_allow_html=True)
-        col1, col2 = st.columns([6,1])
-        with col1: pass
-        with col2:
-            if st.button("Copy", key=copy_feedback_key):
-                st.clipboard_set(text)
-                st.session_state[copy_feedback_key] = "Copied!"
-        if st.session_state[copy_feedback_key]:
-            st.markdown(f'<span class="copy-feedback">{st.session_state[copy_feedback_key]}</span>', unsafe_allow_html=True)
+        if st.button("Copy", key=copy_key):
+            st.clipboard_set(text)
+            st.session_state[copy_key] = "Copied!"
+        if st.session_state[copy_key]:
+            st.markdown(f'<span class="copy-feedback">{st.session_state[copy_key]}</span>', unsafe_allow_html=True)
 
-# ---------- Display Outputs ----------
-output_box("🌐 Translation", st.session_state.translated_text, "copy_feedback_translation")
-output_box("🔤 Phonetic", st.session_state.phonetic_text, "copy_feedback_phonetic")
+output_box("🌐 Translation", st.session_state.translated_text,"copy_feedback_translation")
+output_box("🔤 Phonetic", st.session_state.phonetic_text,"copy_feedback_phonetic")
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
     st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
     try:
-        tts_lang = lang_map.get(st.session_state.target_lang, "en")
-        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
-        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts_lang = lang_map.get(st.session_state.target_lang,"en")
+        tts = gTTS(text=st.session_state.translated_text,lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False,suffix=".mp3")
         tts.save(tts_file.name)
-        st.audio(tts_file.name, format="audio/mp3")
+        st.audio(tts_file.name,format="audio/mp3")
     except Exception as e:
         st.error(f"❌ Speech generation failed: {e}")
 
