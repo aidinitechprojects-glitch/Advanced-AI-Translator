@@ -6,5 +6,4 @@ numpy==1.26.2
 httpx==0.24.1
 httpcore==0.17.0
 setuptools
-streamlit-mic-recorder==0.0.8
 rich==13.9.2
