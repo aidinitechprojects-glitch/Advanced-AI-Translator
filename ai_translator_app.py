@@ -2,6 +2,7 @@ import streamlit as st
 from gtts import gTTS
 import openai
 import tempfile
+import uuid
 
 # ---------- Page Config ----------
 st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="centered")
@@ -19,11 +20,12 @@ textarea:focus {outline:none !important;background-color:#fff5db !important;bord
 .output-title {font-weight:700;font-size:1.2rem;margin-bottom:6px;color:#ff7f23;}
 .copy-feedback {color:#ff7f23;font-weight:700;font-size:0.9rem;margin-left:10px;}
 .audio-title {font-size:1.18rem;font-weight:700;color:#ff9123;text-align:center;margin-bottom:10px;}
+.copy-btn {position:absolute;right:14px;top:14px;background:#ff7f23;color:white;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;}
 </style>
 """, unsafe_allow_html=True)
 
 # ---------- Session State ----------
-for key in ["source_lang","target_lang","text_input","translated_text","phonetic_text","copy_feedback_translation","copy_feedback_phonetic"]:
+for key in ["source_lang","target_lang","text_input","translated_text","phonetic_text"]:
     if key not in st.session_state:
         st.session_state[key] = ""
 
@@ -56,7 +58,7 @@ st.session_state.text_input = st.text_area("Text to translate", value=st.session
 clear_col, translate_col = st.columns([1,5])
 with clear_col:
     if st.button("Clear"):
-        for key in ["text_input","translated_text","phonetic_text","copy_feedback_translation","copy_feedback_phonetic"]:
+        for key in ["text_input","translated_text","phonetic_text"]:
             st.session_state[key] = ""
         st.experimental_rerun()
 with translate_col:
@@ -82,18 +84,22 @@ if translate_clicked and st.session_state.text_input.strip():
         )
         st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Output Box ----------
-def output_box(title,text,copy_key):
+# ---------- Output Box with JS Copy ----------
+def output_box(title, text):
     if text:
-        st.markdown(f'<div class="output-box"><div class="output-title">{title}</div>{text}</div>', unsafe_allow_html=True)
-        if st.button("Copy", key=copy_key):
-            st.clipboard_set(text)
-            st.session_state[copy_key] = "Copied!"
-        if st.session_state[copy_key]:
-            st.markdown(f'<span class="copy-feedback">{st.session_state[copy_key]}</span>', unsafe_allow_html=True)
+        unique_id = str(uuid.uuid4()).replace("-", "")
+        st.markdown(f"""
+        <div class="output-box">
+            <div class="output-title">{title}</div>
+            {text}
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('{unique_id}').innerText).then(()=>{{document.getElementById('{unique_id}-feedback').innerText='Copied!';}})">Copy</button>
+            <div id="{unique_id}" style="display:none;">{text}</div>
+            <div id="{unique_id}-feedback" class="copy-feedback"></div>
+        </div>
+        """, unsafe_allow_html=True)
 
-output_box("🌐 Translation", st.session_state.translated_text,"copy_feedback_translation")
-output_box("🔤 Phonetic", st.session_state.phonetic_text,"copy_feedback_phonetic")
+output_box("🌐 Translation", st.session_state.translated_text)
+output_box("🔤 Phonetic", st.session_state.phonetic_text)
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
