@@ -15,8 +15,6 @@ body, [data-testid="stAppViewContainer"] {background: linear-gradient(135deg, #f
 .header-title { font-size: 2.8rem; font-weight: 800; color: #e66c02; letter-spacing: 0.04em; }
 .header-badge { background-color: #ff7f23; color: white; font-weight: 700; padding: 7px 26px; font-size: 1.15rem; border-radius: 16px; box-shadow: 0 0 28px #ffB84eaa; }
 .subtitle { margin-top: 6px; margin-bottom: 38px; font-weight: 600; font-size: 1.22rem; color: #a15303cc; }
-.stSelectbox > div:first-child { font-weight: 600; font-size: 1.1rem; color: #bf6e12cc; }
-.stSelectbox > div[role="listbox"] > div { font-size: 1.02rem; color: #d8922ecc; }
 textarea { font-size: 1.17rem !important; line-height: 1.5 !important; padding: 20px !important; background-color: #fff6e9 !important; color: #7a4d00 !important; border-radius: 16px !important; border: 2px solid #ffaf52 !important; min-height: 110px !important; resize: vertical !important;}
 textarea:focus { outline: none !important; background-color: #fff5db !important; border-color: #ff8a1e !important; box-shadow: 0 0 14px 5px #ff9c1e95 !important;}
 .swap-btn { width: 50px; height: 50px; background: #ff7f23; font-size: 28px; color: white; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: auto; transition: transform 0.24s ease, box-shadow 0.24s ease; box-shadow: 0 0 12px #ffb14dcc; }
@@ -88,9 +86,11 @@ if translate_clicked:
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
-            # Only raw translated text
             translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. Provide only the raw translated text:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": translate_prompt}]
-           
+            )
+            st.session_state.translated_text = response.choices[0].message.content.strip()
+            
+            phon
