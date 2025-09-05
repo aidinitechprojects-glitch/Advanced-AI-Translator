@@ -8,97 +8,103 @@ st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="cen
 
 st.markdown("""
 <style>
-/* Background: subtle smooth gradient */
+/* Background deep dark with subtle radial gradient */
 body, [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    color: #1f2937;
-    font-family: 'Open Sans', Arial, sans-serif;
+    background: radial-gradient(circle at top left, #0a0a0a, #111820);
+    color: #cce6ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-font-smoothing: antialiased;
+    user-select: none;
 }
 
-/* Main container with soft shadow and rounded corners */
+/* Main container with smooth rounded corners and neon blue glow */
 .container {
-    background: #ffffff;
-    border-radius: 18px;
-    padding: 42px 48px 36px;
-    max-width: 700px;
+    background: #121520;
+    border-radius: 20px;
+    padding: 44px 50px 38px;
+    max-width: 720px;
     margin: 48px auto 64px;
-    box-shadow: 0 8px 24px rgba(148, 163, 184, 0.25);
+    box-shadow: 0 0 25px #00f2ff80, 0 20px 40px #000a11cc;
+    border: 1.6px solid #00e9ff9a;
+    backdrop-filter: saturate(180%) blur(12px);
 }
 
-/* Header */
+/* Header with neon cyan gradient text */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 .header-title {
     font-size: 2.8rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: #111827;
+    font-weight: 800;
+    background: linear-gradient(90deg, #00f0ff, #0051bb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.06em;
     user-select: none;
 }
 .header-badge {
-    background-color: #2563eb;
-    color: white;
-    font-weight: 600;
-    padding: 6px 22px;
-    font-size: 1.1rem;
-    border-radius: 12px;
+    background: #00dbff;
+    color: #0c111b;
+    font-weight: 700;
+    padding: 8px 28px;
+    font-size: 1.15rem;
+    border-radius: 14px;
+    box-shadow: 0 0 25px #00f2ffcc;
     user-select: none;
 }
 
-/* Subtitle */
+/* Subtitle with soft pastel cyan */
 .subtitle {
     margin-top: 6px;
-    margin-bottom: 36px;
+    margin-bottom: 40px;
     font-weight: 500;
-    font-size: 1.15rem;
-    color: #4b5563;
+    font-size: 1.24rem;
+    color: #7ae8ffcc;
     user-select: none;
 }
 
-/* Selectbox labels and list items */
+/* Selectbox */
 .stSelectbox > div:first-child {
     font-weight: 600;
     font-size: 1.1rem;
-    color: #1f2937;
+    color: #72cee8ff;
 }
 .stSelectbox > div[role="listbox"] > div {
-    font-size: 1.0rem;
-    color: #374151;
+    font-size: 1.03rem;
+    color: #a4dbfaff;
 }
 
-/* Textarea */
+/* Textarea with dark navy bg and bright cyan border/glow on focus */
 textarea {
-    font-size: 1.12rem !important;
+    font-size: 1.17rem !important;
     line-height: 1.5 !important;
-    padding: 18px !important;
-    background-color: #f9fafb !important;
-    color: #111827 !important;
-    border-radius: 14px !important;
-    border: 1.8px solid #d1d5db !important;
+    padding: 20px !important;
+    background-color: #192431 !important;
+    color: #a6dbff !important;
+    border-radius: 16px !important;
+    border: 2px solid #2caaff !important;
     box-shadow: none !important;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition: border-color 0.25s ease, background-color 0.25s ease;
     min-height: 110px !important;
     resize: vertical !important;
 }
 textarea:focus {
     outline: none !important;
-    background-color: #ffffff !important;
-    border-color: #2563eb !important;
-    box-shadow: 0 0 8px 2px #bfdbfe !important;
+    background-color: #0e1a28 !important;
+    border-color: #00f1ff !important;
+    box-shadow: 0 0 12px 3px #00d4ffe8 !important;
 }
 
-/* Swap Button */
+/* Swap button with glowing cyan */
 .swap-btn {
-    width: 44px;
-    height: 44px;
-    background-color: #2563eb;
-    font-size: 22px;
-    color: #ffffff;
+    width: 50px;
+    height: 50px;
+    background: #0087c0;
+    font-size: 28px;
+    color: #ceffff;
     border-radius: 50%;
     border: none;
     cursor: pointer;
@@ -107,89 +113,94 @@ textarea:focus {
     justify-content: center;
     margin: auto;
     user-select: none;
-    transition: background-color 0.2s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 0 8px #00e2ff99;
 }
 .swap-btn:hover {
-    background-color: #1d4ed8;
+    transform: scale(1.18);
+    box-shadow: 0 0 20px #00fbffff;
 }
 
-/* Action Buttons */
+/* Action buttons with vibrant cyan to deep blue gradient */
 .action-btn {
-    background-color: #2563eb;
-    border-radius: 14px;
-    padding: 14px 0;
-    color: white !important;
-    font-weight: 600;
-    font-size: 1.15rem;
+    background: linear-gradient(90deg, #00f5ff, #006acc);
+    border-radius: 18px;
+    padding: 16px 0;
+    color: #e0ffff !important;
+    font-weight: 700;
+    font-size: 1.28rem;
     border: none;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 22px;
     cursor: pointer;
     user-select: none;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 7px 22px #00bfffbb;
 }
 .action-btn:hover {
-    background-color: #1d4ed8;
+    background: linear-gradient(90deg, #00bbff, #004f9a);
+    box-shadow: 0 12px 36px #00dfffcc;
 }
 
-/* Clear Button */
+/* Clear button with mild dark background */
 .clear-btn {
-    background-color: #6b7280 !important;
-    color: white !important;
-    font-size: 1.0rem;
+    background-color: #34637cdd !important;
+    color: #c3e6f7dd !important;
+    font-size: 1.05rem;
     font-weight: 600;
-    border-radius: 12px;
-    padding: 8px 20px;
+    border-radius: 14px;
+    padding: 10px 24px;
     border: none;
     cursor: pointer;
     user-select: none;
     transition: background-color 0.3s ease;
-    margin-top: 16px;
+    margin-top: 18px;
 }
 .clear-btn:hover {
-    background-color: #4b5563 !important;
+    background-color: #2073a0dd !important;
 }
 
-/* Output Cards */
+/* Output cards with rich navy background and bright text */
 .output-card {
-    background-color: #f3f4f6;
-    border-radius: 18px;
-    padding: 26px 24px 22px;
-    margin-bottom: 32px;
-    font-size: 1.12rem;
-    color: #1e293b;
+    background: #0f172a;
+    border-radius: 22px;
+    box-shadow: 0 20px 40px #006d8999;
+    padding: 32px 28px 28px;
+    margin-bottom: 34px;
+    font-size: 1.22rem;
+    color: #a5e3ff;
     user-select: text;
     line-height: 1.6;
 }
 .output-title {
-    font-weight: 700;
-    font-size: 1.25rem;
-    margin-bottom: 14px;
-    color: #2563eb;
+    font-weight: 800;
+    font-size: 1.36rem;
+    margin-bottom: 18px;
+    color: #00dffc;
     user-select: none;
 }
 
-/* Audio Playback Title */
+/* Audio title in neon cyan */
 .audio-title {
-    font-size: 1.28rem;
-    font-weight: 700;
-    color: #2563eb;
+    font-size: 1.38rem;
+    font-weight: 800;
+    color: #00eaff;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     user-select: none;
 }
 
 /* Responsive */
-@media (max-width: 700px) {
+@media (max-width: 720px) {
     .container {
         margin: 24px 18px 48px;
         padding: 32px 28px 24px;
     }
     .header-title {
-        font-size: 2.4rem;
+        font-size: 2.6rem;
     }
     .action-btn {
-        font-size: 1.05rem;
+        font-size: 1.16rem;
     }
 }
 </style>
@@ -214,11 +225,11 @@ st.markdown("""
     <div class="header-badge">PRO</div>
 </div>
 """, unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Translate text across languages with phonetics & audio playback.</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Translate across languages with phonetics & audio playback — powered by sleek iqoo Neo 9 Pro colors.</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="container">', unsafe_allow_html=True)
 
-# ---------- Language Selection with Swap Button ----------
+# ---------- Language Selection ----------
 lang_map = {
     "English": "en", "French": "fr", "Spanish": "es", "German": "de", "Italian": "it", "Portuguese": "pt",
     "Russian": "ru", "Japanese": "ja", "Korean": "ko", "Chinese (Mandarin)": "zh-cn", "Arabic": "ar",
@@ -244,7 +255,7 @@ with col3:
     st.session_state.target_lang = st.selectbox("To", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
 # ---------- Text Input ----------
-st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=100, placeholder="Type or paste your text here...")
+st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=120, placeholder="Type or paste your text here...")
 
 # ---------- Action Buttons ----------
 clear_col, translate_col = st.columns([1, 5])
