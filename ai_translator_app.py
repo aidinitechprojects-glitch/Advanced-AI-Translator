@@ -2,6 +2,7 @@ import streamlit as st
 from gtts import gTTS
 import openai
 import tempfile
+import streamlit.components.v1 as components
 
 # ---------- Page Config ----------
 st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="centered")
@@ -38,10 +39,9 @@ if "target_lang" not in st.session_state: st.session_state.target_lang = "Hindi"
 if "text_input" not in st.session_state: st.session_state.text_input = ""
 if "translated_text" not in st.session_state: st.session_state.translated_text = ""
 if "phonetic_text" not in st.session_state: st.session_state.phonetic_text = ""
-if "copy_message" not in st.session_state: st.session_state.copy_message = ""
 
 # ---------- Header ----------
-st.markdown(f"""
+st.markdown("""
 <div class="header">
     <div class="header-title">AI Translator Pro</div>
     <div class="header-badge">PRO</div>
@@ -86,13 +86,11 @@ with translate_col:
 
 # ---------- Translation ----------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
-
 if translate_clicked:
     if not st.session_state.text_input.strip():
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
-            # Raw translation
             translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang} without explanations:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
@@ -107,30 +105,9 @@ if translate_clicked:
             )
             st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Helper: Output with Copy ----------
+# ---------- Helper: Output with Copy using JS ----------
 def output_with_copy(title, text):
-    st.markdown(f'<div class="output-card"><div class="output-title">{title}</div></div>', unsafe_allow_html=True)
-    st.text_area("", value=text, height=80, key=f"{title}_text_area", disabled=True)
-    if st.button(f"Copy {title}", key=f"copy_{title}"):
-        st.clipboard_set(text)
-        st.success(f"{title} copied!")
-
-# ---------- Display Outputs ----------
-if st.session_state.translated_text:
-    output_with_copy("🌐 Translation", st.session_state.translated_text)
-if st.session_state.phonetic_text:
-    output_with_copy("🔤 Phonetic", st.session_state.phonetic_text)
-
-# ---------- Audio ----------
-if st.session_state.translated_text:
-    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
-    try:
-        tts_lang = lang_map.get(st.session_state.target_lang, "en")
-        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
-        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-        tts.save(tts_file.name)
-        st.audio(tts_file.name, format="audio/mp3")
-    except Exception as e:
-        st.error(f"❌ Speech generation failed: {e}")
-
-st.markdown('</div>', unsafe_allow_html=True)
+    html_code = f"""
+    <div class="output-card">
+        <div class="output-title">{title}</div>
+        <textarea id="{
