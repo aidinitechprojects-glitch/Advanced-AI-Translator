@@ -1,4 +1,4 @@
-streamlit==1.29.0
+streamlit==1.49.1
 openai==1.31.0
 gTTS==2.5.1
 pydub==0.25.1
@@ -9,4 +9,4 @@ httpcore==0.17.0
 setuptools
 streamlit-webrtc==0.47.7
 av==10.0.0
-rich==13.9.2
+rich==14.1.0
