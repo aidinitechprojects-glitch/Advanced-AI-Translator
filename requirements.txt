@@ -2,3 +2,10 @@ streamlit==1.29.0
 openai==1.31.0
 gTTS==2.5.1
 pydub==0.25.1
+numpy==1.26.2
+webrtcvad==2.0.10
+httpx==0.24.1
+httpcore==0.17.0
+setuptools
+streamlit-webrtc==0.47.7
+av==10.0.0
