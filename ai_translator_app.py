@@ -6,7 +6,7 @@ import tempfile
 # ---------- Page Config ----------
 st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="centered")
 
-# ---------- Custom CSS ----------
+# ---------- CSS ----------
 st.markdown("""
 <style>
 body, [data-testid="stAppViewContainer"] {
@@ -37,16 +37,14 @@ textarea:focus {outline:none !important;background-color:#fff5db !important;bord
 .clear-btn:hover {background-color:#9e5c00cc !important;}
 .output-box {background:#fff9f0;border-radius:16px;border:1.8px solid #ffb350;padding:14px 14px 12px;margin-bottom:8px;position:relative;font-size:1.13rem;color:#7a4d00;line-height:1.45;}
 .output-title {font-weight:700;font-size:1.2rem;margin-bottom:6px;color:#ff7f23;}
-.copy-btn {position:absolute;top:10px;right:10px;background:#ffb338;border:none;border-radius:10px;padding:4px 8px;font-size:0.8rem;color:#522f00;cursor:pointer;transition:filter 0.2s;}
-.copy-btn:hover {filter:brightness(1.15);}
-.copied-feedback {position:absolute;top:10px;right:60px;color:#ff7f23;font-weight:700;font-size:0.82rem;}
+.copy-feedback {color:#ff7f23;font-weight:700;font-size:0.9rem;margin-left:10px;}
 .audio-title {font-size:1.18rem;font-weight:700;color:#ff9123;text-align:center;margin-bottom:10px;}
 @media (max-width:720px){.container{margin:12px 12px 24px;padding:14px 14px 14px;}.header-title{font-size:1.8rem;}.action-btn{font-size:1.1rem;}}
 </style>
 """, unsafe_allow_html=True)
 
 # ---------- Session State ----------
-for key in ["source_lang", "target_lang", "text_input", "translated_text", "phonetic_text", "copy_feedback"]:
+for key in ["source_lang", "target_lang", "text_input", "translated_text", "phonetic_text", "copy_feedback_translation", "copy_feedback_phonetic"]:
     if key not in st.session_state:
         st.session_state[key] = ""
 
@@ -89,7 +87,8 @@ with clear_col:
         st.session_state.text_input = ""
         st.session_state.translated_text = ""
         st.session_state.phonetic_text = ""
-        st.session_state.copy_feedback = ""
+        st.session_state.copy_feedback_translation = ""
+        st.session_state.copy_feedback_phonetic = ""
         st.experimental_rerun()
 with translate_col:
     translate_clicked = st.button("Translate")
@@ -112,22 +111,22 @@ if translate_clicked and st.session_state.text_input.strip():
         )
         st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------- Output Function ----------
-def output_box(title, text):
+# ---------- Output Box Function ----------
+def output_box(title, text, copy_feedback_key):
     if text:
-        container = f"""
-        <div class="output-box">
-            <div class="output-title">{title}</div>
-            <div id="output-text">{text}</div>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText('{text.replace("'", "\\'")}').then(()=>{{document.getElementById('copied-feedback').style.display='inline';}})">Copy</button>
-            <span id="copied-feedback" class="copied-feedback" style="display:none;">Copied!</span>
-        </div>
-        """
-        st.markdown(container, unsafe_allow_html=True)
+        st.markdown(f'<div class="output-box"><div class="output-title">{title}</div>{text}</div>', unsafe_allow_html=True)
+        col1, col2 = st.columns([6,1])
+        with col1: pass
+        with col2:
+            if st.button("Copy", key=copy_feedback_key):
+                st.clipboard_set(text)
+                st.session_state[copy_feedback_key] = "Copied!"
+        if st.session_state[copy_feedback_key]:
+            st.markdown(f'<span class="copy-feedback">{st.session_state[copy_feedback_key]}</span>', unsafe_allow_html=True)
 
 # ---------- Display Outputs ----------
-output_box("🌐 Translation", st.session_state.translated_text)
-output_box("🔤 Phonetic", st.session_state.phonetic_text)
+output_box("🌐 Translation", st.session_state.translated_text, "copy_feedback_translation")
+output_box("🔤 Phonetic", st.session_state.phonetic_text, "copy_feedback_phonetic")
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
