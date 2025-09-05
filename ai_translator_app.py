@@ -8,15 +8,12 @@ st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="cen
 
 st.markdown("""
 <style>
-/* Background gradient */
 body, [data-testid="stAppViewContainer"] {
     background: linear-gradient(135deg, #1a2238 0%, #4e5d78 100%);
     color: #f0f2f5;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
-
-/* Glass container */
 .pro-glass {
     background: rgba(30, 38, 60, 0.85);
     border-radius: 25px;
@@ -28,11 +25,6 @@ body, [data-testid="stAppViewContainer"] {
     border: 2px solid rgba(255,255,255,0.06);
     transition: box-shadow 0.3s ease;
 }
-.pro-glass:hover {
-    box-shadow: 0 30px 60px rgba(10, 14, 38, 0.9);
-}
-
-/* Header */
 .pro-header {
     display: flex;
     justify-content: space-between;
@@ -63,8 +55,6 @@ body, [data-testid="stAppViewContainer"] {
     font-size: 1.3rem;
     margin-bottom: 40px;
 }
-
-/* Selectboxes */
 .stSelectbox > div:first-child {
     font-size: 1.18rem;
     font-weight: 600;
@@ -74,8 +64,6 @@ body, [data-testid="stAppViewContainer"] {
     font-size: 1.1rem;
     color: #d1d9ff;
 }
-
-/* Textarea */
 textarea {
     background: rgba(255, 255, 255, 0.1) !important;
     color: #e0e9ff !important;
@@ -87,14 +75,11 @@ textarea {
     box-shadow: inset 0 0 15px rgba(0, 114, 255, 0.3);
     transition: border-color 0.3s ease, background-color 0.3s ease;
 }
-
 textarea:focus {
     border: 2.5px solid #00b4ff !important;
     background-color: rgba(6, 71, 197, 0.25) !important;
     outline: none !important;
 }
-
-/* Swap Button */
 .pro-swap-btn {
     width: 48px;
     height: 48px;
@@ -112,13 +97,10 @@ textarea:focus {
     transition: transform 0.2s ease;
     box-shadow: 0 6px 12px rgba(0, 198, 255, 0.6);
 }
-
 .pro-swap-btn:hover {
     transform: scale(1.14);
     box-shadow: 0 9px 20px rgba(0, 198, 255, 0.9);
 }
-
-/* Buttons */
 .pro-btn {
     background: linear-gradient(90deg, #0072ff, #00c6ff);
     color: #ffffff !important;
@@ -133,13 +115,10 @@ textarea:focus {
     cursor: pointer;
     margin-top: 18px;
 }
-
 .pro-btn:hover {
     background: linear-gradient(90deg, #005bb5, #008de4);
     box-shadow: 0 12px 32px rgba(0, 180, 255, 0.8);
 }
-
-/* Clear Button */
 .clear-btn {
     background: #3a4284cc !important;
     color: #e0e9ff !important;
@@ -152,12 +131,9 @@ textarea:focus {
     transition: background-color 0.23s ease;
     margin-top: 14px;
 }
-
 .clear-btn:hover {
     background: #5e65c9cc !important;
 }
-
-/* Output Cards */
 .pro-out-card {
     background: rgba(16, 28, 64, 0.75);
     border-radius: 20px;
@@ -169,11 +145,9 @@ textarea:focus {
     user-select: text;
     transition: background-color 0.35s ease;
 }
-
 .pro-out-card:hover {
     background-color: rgba(16, 28, 64, 0.9);
 }
-
 .pro-out-title {
     color: #00b4ff;
     font-weight: 700;
@@ -181,8 +155,6 @@ textarea:focus {
     margin-bottom: 10px;
     user-select: none;
 }
-
-/* Audio Title */
 .audio-title {
     color: #00c6ff;
     font-size: 1.25rem;
@@ -191,8 +163,6 @@ textarea:focus {
     margin-top: 6px;
     margin-bottom: 16px;
 }
-
-/* Responsive columns */
 @media (max-width: 640px) {
     .pro-glass {
         padding: 28px 30px 24px;
@@ -271,7 +241,7 @@ with btn_clear:
 with btn_translate:
     translate_clicked = st.button("Translate", key="translate", help="Translate text")
 
-# --------- Translation Logic ---------
+# --------- Translation Logic (Original, Unchanged) ---------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 if translate_clicked:
@@ -293,7 +263,7 @@ if translate_clicked:
             )
             st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# --------- Outputs ---------
+# --------- Output ---------
 if st.session_state.translated_text:
     st.markdown(
         f'<div class="pro-out-card">'
