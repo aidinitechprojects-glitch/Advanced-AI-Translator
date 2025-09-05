@@ -8,61 +8,58 @@ st.set_page_config(page_title="AI Translator Pro", page_icon="🌐", layout="cen
 
 st.markdown("""
 <style>
-/* Background deep dark with subtle radial gradient */
+/* Background soft warm gradient */
 body, [data-testid="stAppViewContainer"] {
-    background: radial-gradient(circle at top left, #0a0a0a, #111820);
-    color: #cce6ff;
+    background: linear-gradient(135deg, #fff8f1 0%, #ffe5d1 100%);
+    color: #4a4030;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-font-smoothing: antialiased;
     user-select: none;
 }
 
-/* Main container with smooth rounded corners and neon blue glow */
+/* Main container with clean white and subtle orange shadow */
 .container {
-    background: #121520;
-    border-radius: 20px;
-    padding: 44px 50px 38px;
+    background: #fffaf3;
+    border-radius: 22px;
+    padding: 46px 52px 40px;
     max-width: 720px;
     margin: 48px auto 64px;
-    box-shadow: 0 0 25px #00f2ff80, 0 20px 40px #000a11cc;
-    border: 1.6px solid #00e9ff9a;
-    backdrop-filter: saturate(180%) blur(12px);
+    box-shadow: 0 15px 50px rgba(255, 135, 0, 0.35);
+    border: 1.8px solid #ffd8a0;
 }
 
-/* Header with neon cyan gradient text */
+/* Header */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 .header-title {
     font-size: 2.8rem;
     font-weight: 800;
-    background: linear-gradient(90deg, #00f0ff, #0051bb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 0.06em;
+    color: #e66c02;
+    letter-spacing: 0.04em;
     user-select: none;
 }
 .header-badge {
-    background: #00dbff;
-    color: #0c111b;
+    background-color: #ff7f23;
+    color: white;
     font-weight: 700;
-    padding: 8px 28px;
+    padding: 7px 26px;
     font-size: 1.15rem;
-    border-radius: 14px;
-    box-shadow: 0 0 25px #00f2ffcc;
+    border-radius: 16px;
+    box-shadow: 0 0 28px #ffB84eaa;
     user-select: none;
 }
 
-/* Subtitle with soft pastel cyan */
+/* Subtitle */
 .subtitle {
     margin-top: 6px;
-    margin-bottom: 40px;
-    font-weight: 500;
-    font-size: 1.24rem;
-    color: #7ae8ffcc;
+    margin-bottom: 38px;
+    font-weight: 600;
+    font-size: 1.22rem;
+    color: #a15303cc;
     user-select: none;
 }
 
@@ -70,41 +67,41 @@ body, [data-testid="stAppViewContainer"] {
 .stSelectbox > div:first-child {
     font-weight: 600;
     font-size: 1.1rem;
-    color: #72cee8ff;
+    color: #bf6e12cc;
 }
 .stSelectbox > div[role="listbox"] > div {
-    font-size: 1.03rem;
-    color: #a4dbfaff;
+    font-size: 1.02rem;
+    color: #d8922ecc;
 }
 
-/* Textarea with dark navy bg and bright cyan border/glow on focus */
+/* Textarea with light orange shadows */
 textarea {
     font-size: 1.17rem !important;
     line-height: 1.5 !important;
     padding: 20px !important;
-    background-color: #192431 !important;
-    color: #a6dbff !important;
+    background-color: #fff6e9 !important;
+    color: #7a4d00 !important;
     border-radius: 16px !important;
-    border: 2px solid #2caaff !important;
+    border: 2px solid #ffaf52 !important;
     box-shadow: none !important;
-    transition: border-color 0.25s ease, background-color 0.25s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
     min-height: 110px !important;
     resize: vertical !important;
 }
 textarea:focus {
     outline: none !important;
-    background-color: #0e1a28 !important;
-    border-color: #00f1ff !important;
-    box-shadow: 0 0 12px 3px #00d4ffe8 !important;
+    background-color: #fff5db !important;
+    border-color: #ff8a1e !important;
+    box-shadow: 0 0 14px 5px #ff9c1e95 !important;
 }
 
-/* Swap button with glowing cyan */
+/* Swap button with vibrant orange */
 .swap-btn {
     width: 50px;
     height: 50px;
-    background: #0087c0;
+    background: #ff7f23;
     font-size: 28px;
-    color: #ceffff;
+    color: white;
     border-radius: 50%;
     border: none;
     cursor: pointer;
@@ -113,20 +110,20 @@ textarea:focus {
     justify-content: center;
     margin: auto;
     user-select: none;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    box-shadow: 0 0 8px #00e2ff99;
+    transition: transform 0.24s ease, box-shadow 0.24s ease;
+    box-shadow: 0 0 12px #ffb14dcc;
 }
 .swap-btn:hover {
     transform: scale(1.18);
-    box-shadow: 0 0 20px #00fbffff;
+    box-shadow: 0 0 28px #ffb14ddd;
 }
 
-/* Action buttons with vibrant cyan to deep blue gradient */
+/* Action buttons gradient orange */
 .action-btn {
-    background: linear-gradient(90deg, #00f5ff, #006acc);
+    background: linear-gradient(90deg, #ff7d00, #ffb338);
     border-radius: 18px;
     padding: 16px 0;
-    color: #e0ffff !important;
+    color: #522f00 !important;
     font-weight: 700;
     font-size: 1.28rem;
     border: none;
@@ -135,21 +132,21 @@ textarea:focus {
     cursor: pointer;
     user-select: none;
     transition: background 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 7px 22px #00bfffbb;
+    box-shadow: 0 7px 22px #ffa53bcc;
 }
 .action-btn:hover {
-    background: linear-gradient(90deg, #00bbff, #004f9a);
-    box-shadow: 0 12px 36px #00dfffcc;
+    background: linear-gradient(90deg, #e56e00, #db9f2d);
+    box-shadow: 0 12px 36px #ffb95bcc;
 }
 
-/* Clear button with mild dark background */
+/* Clear button soft brown */
 .clear-btn {
-    background-color: #34637cdd !important;
-    color: #c3e6f7dd !important;
+    background-color: #a6732cdd !important;
+    color: #fbe9cd !important;
     font-size: 1.05rem;
     font-weight: 600;
     border-radius: 14px;
-    padding: 10px 24px;
+    padding: 10px 22px;
     border: none;
     cursor: pointer;
     user-select: none;
@@ -157,18 +154,18 @@ textarea:focus {
     margin-top: 18px;
 }
 .clear-btn:hover {
-    background-color: #2073a0dd !important;
+    background-color: #9e5c00cc !important;
 }
 
-/* Output cards with rich navy background and bright text */
+/* Output cards with light creamy background */
 .output-card {
-    background: #0f172a;
+    background: #fff9f0;
     border-radius: 22px;
-    box-shadow: 0 20px 40px #006d8999;
+    box-shadow: 0 16px 48px #ff9b2b5e;
     padding: 32px 28px 28px;
     margin-bottom: 34px;
     font-size: 1.22rem;
-    color: #a5e3ff;
+    color: #7a4d00;
     user-select: text;
     line-height: 1.6;
 }
@@ -176,24 +173,24 @@ textarea:focus {
     font-weight: 800;
     font-size: 1.36rem;
     margin-bottom: 18px;
-    color: #00dffc;
+    color: #ff7f23;
     user-select: none;
 }
 
-/* Audio title in neon cyan */
+/* Audio title bright orange */
 .audio-title {
     font-size: 1.38rem;
     font-weight: 800;
-    color: #00eaff;
+    color: #ff9123;
     text-align: center;
     margin-bottom: 22px;
     user-select: none;
 }
 
-/* Responsive */
+/* Responsive adjustments */
 @media (max-width: 720px) {
     .container {
-        margin: 24px 18px 48px;
+        margin: 24px 24px 48px;
         padding: 32px 28px 24px;
     }
     .header-title {
@@ -225,7 +222,7 @@ st.markdown("""
     <div class="header-badge">PRO</div>
 </div>
 """, unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Translate across languages with phonetics & audio playback — powered by sleek iqoo Neo 9 Pro colors.</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Translate across languages with phonetics & audio playback — inspired by iqoo Neo 9 Pro Orange & White.</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="container">', unsafe_allow_html=True)
 
