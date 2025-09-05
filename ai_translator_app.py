@@ -9,7 +9,6 @@ st.set_page_config(page_title="🌍 AI Translator", page_icon="🤖", layout="ce
 # ---------------- Custom CSS ----------------
 st.markdown("""
 <style>
-/* Body & Font */
 body {
     background: #0F0F1F;
     color: #ECF0F1;
@@ -18,34 +17,21 @@ body {
 
 /* Header */
 .app-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    font-size: 2.8rem;
+    text-align: center;
+    font-size: 3rem;
     font-weight: 900;
-    background: linear-gradient(90deg, #FF6B00, #FF1D75);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FF6B00;
     margin-bottom: 5px;
+    font-family: 'Lucida Console', Courier, monospace;
 }
 
-/* Subtitle - Gradient & Glow Animation */
+/* Subtitle */
 .subtitle {
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 600;
-    background: linear-gradient(90deg, #00F0FF, #FF00FF, #FF8C00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: glow 3s ease-in-out infinite alternate;
+    color: #FFFFFF;
     margin-bottom: 20px;
-}
-
-@keyframes glow {
-    0% { text-shadow: 0 0 5px #00F0FF, 0 0 10px #FF00FF; }
-    50% { text-shadow: 0 0 10px #FF8C00, 0 0 20px #FF00FF; }
-    100% { text-shadow: 0 0 5px #00F0FF, 0 0 15px #FF8C00; }
 }
 
 /* Text Area with Scroll */
@@ -56,32 +42,49 @@ body {
     border-radius: 12px;
     padding: 10px;
     max-height: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
-/* Gradient Button */
+/* Buttons */
 .stButton>button {
-    background: linear-gradient(90deg, #FF6B00, #FF1D75);
+    background: #FF6B00;
     color: #FFFFFF;
     font-weight: bold;
-    border-radius: 15px;
-    height: 50px;
+    border-radius: 12px;
+    height: 40px;
     width: 100%;
-    font-size: 18px;
+    font-size: 16px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-    transition: all 0.3s ease;
-    box-shadow: 0px 4px 15px rgba(255,107,0,0.5);
+    transition: all 0.2s ease;
 }
 .stButton>button:hover {
     transform: scale(1.05);
-    box-shadow: 0px 6px 25px rgba(255,107,0,0.7);
 }
 
-/* Output Boxes - Glassmorphism */
+/* Swap Button smaller */
+.swap-button {
+    background: #FF1D75;
+    color: #FFFFFF;
+    font-size: 14px;
+    height: 35px;
+}
+
+/* Clear Button smaller */
+.clear-button {
+    background: #555555;
+    color: #FFFFFF;
+    font-size: 14px;
+    height: 30px;
+    width: 100px;
+    float: right;
+    margin-top: 5px;
+}
+
+/* Output Boxes */
 .output-box {
     backdrop-filter: blur(10px);
     background: rgba(255,255,255,0.05);
-    border-radius: 25px;
+    border-radius: 20px;
     padding: 20px;
     box-shadow: 0px 8px 30px rgba(0,0,0,0.6);
     margin-bottom: 20px;
@@ -91,9 +94,7 @@ body {
 .output-heading {
     font-weight: 700;
     font-size: 20px;
-    background: linear-gradient(90deg, #FF6B00, #FF1D75);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FF6B00;
     margin-bottom: 10px;
 }
 
@@ -105,20 +106,11 @@ body {
     overflow-y: auto;
 }
 
-/* Swap & Copy buttons */
-.swap-button, .copy-button {
+/* Copy Buttons */
+.copy-button {
+    font-size: 14px;
     margin-top: 5px;
     margin-bottom: 10px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-/* Divider Line */
-.divider {
-    height: 2px;
-    background: linear-gradient(90deg, #FF6B00, #FF1D75);
-    margin: 20px 0;
-    border-radius: 2px;
 }
 
 /* Audio Title */
@@ -133,7 +125,7 @@ body {
 
 # ---------------- Header ----------------
 st.markdown('<div class="app-header">🤖 AI Translator</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">🌐 AI-powered multilingual translator with phonetic transcription and natural speech playback</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Translate text across languages with phonetics & audio playback</div>', unsafe_allow_html=True)
 
 # ---------------- OpenAI API Key ----------------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -159,13 +151,22 @@ with col1:
 with col2:
     target_lang = st.selectbox("Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 with col3:
-    if st.button("🔄 Swap", key="swap"):
+    if st.button("🔄 Swap", key="swap", help="Swap languages and input text"):
+        # Swap languages
         source_lang, target_lang = target_lang, source_lang
+        # Swap text input with translated output if available
+        try:
+            text_input, translated_text = translated_text, text_input
+        except NameError:
+            pass
+        st.experimental_rerun()
 
-# Clear button
-if st.button("Clear"):
-    text_input = ""
-    st.experimental_rerun()
+# ---------------- Clear Button under Input Box ----------------
+clear_col1, clear_col2 = st.columns([0.85,0.15])
+with clear_col2:
+    if st.button("Clear", key="clear", help="Clear input text"):
+        text_input = ""
+        st.experimental_rerun()
 
 # ---------------- Translate ----------------
 if st.button("Translate"):
@@ -205,8 +206,6 @@ if st.button("Translate"):
                     unsafe_allow_html=True)
         if st.button("📋 Copy Phonetic", key="copy2"):
             st.experimental_set_clipboard(phonetic_text)
-
-        st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
         # Audio playback with title
         st.markdown('<div class="audio-title">🔊 Play Translated Audio</div>', unsafe_allow_html=True)
