@@ -6,7 +6,7 @@ import tempfile
 # ---------------- Streamlit Page Config ----------------
 st.set_page_config(page_title="🌍 AI Translator", page_icon="🤖", layout="centered")
 
-# ---------------- Custom CSS for modern UI ----------------
+# ---------------- Custom CSS ----------------
 st.markdown("""
 <style>
 body {
@@ -18,14 +18,19 @@ h1 {
     font-weight: 800;
     font-size: 2.5rem;
     color: #FFFFFF;
-    display: flex;
-    align-items: center;
 }
 .output-box {
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
     margin-bottom: 20px;
+}
+.output-heading {
+    font-weight: bold;
+    font-size: 18px;
+    background: linear-gradient(90deg, #FF8C00, #FF2D95);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .stButton>button {
     background: linear-gradient(90deg, #FF8C00, #FF2D95);
@@ -44,11 +49,9 @@ h1 {
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- Page Header with AI Logo ----------------
+# ---------------- Page Header ----------------
 st.markdown("""
-<h1 style="text-align:center;">
-    🤖 AI Translator
-</h1>
+<h1 style="text-align:center;">🤖 AI Translator</h1>
 <p style="text-align:center; font-size:18px; color:#AAB2BD;">
 Translate your text across languages with phonetics & audio playback
 </p>
@@ -101,13 +104,13 @@ if st.button("Translate"):
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
         # ---------------- Display Outputs ----------------
-        st.markdown(f"<div class='output-box' style='background: linear-gradient(135deg, #1E3C72, #2A5298);'>"
-                    f"<b style='color:#FFD700; font-size:18px;'>🌐 Translated ({target_lang}):</b><br>"
+        st.markdown(f"<div class='output-box' style='background:#2C3E50;'>"
+                    f"<div class='output-heading'>🌐 Translated ({target_lang}):</div>"
                     f"<span style='color:#ECF0F1; font-size:20px;'>{translated_text}</span></div>",
                     unsafe_allow_html=True)
 
-        st.markdown(f"<div class='output-box' style='background: linear-gradient(135deg, #6A11CB, #2575FC);'>"
-                    f"<b style='color:#00CED1; font-size:18px;'>🔤 Phonetic:</b><br>"
+        st.markdown(f"<div class='output-box' style='background:#2C3E50;'>"
+                    f"<div class='output-heading'>🔤 Phonetic:</div>"
                     f"<span style='color:#ECF0F1; font-size:18px;'>{phonetic_text}</span></div>",
                     unsafe_allow_html=True)
 
