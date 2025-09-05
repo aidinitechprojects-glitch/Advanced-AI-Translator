@@ -124,4 +124,14 @@ if st.session_state.phonetic_text:
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
-    st.markdown('<div class="audio-title
+    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
+    try:
+        tts_lang = lang_map.get(st.session_state.target_lang, "en")
+        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tts_file.name)
+        st.audio(tts_file.name, format="audio/mp3")
+    except Exception as e:
+        st.error(f"Audio playback failed: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True)
