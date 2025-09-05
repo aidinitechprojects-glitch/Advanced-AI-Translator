@@ -6,12 +6,46 @@ import tempfile
 # ---------------- Streamlit Page Config ----------------
 st.set_page_config(page_title="🌍 AI Translator", page_icon="🌐", layout="centered")
 
+# ---------------- Custom CSS for modern UI ----------------
 st.markdown("""
-<h1 style="text-align:center; color:#4CAF50;">🌍 AI Translator</h1>
-<p style="text-align:center; font-size:18px; color:#888;">
-Translate between multiple languages with phonetics and speech playback.
-</p>
+<style>
+body {
+    background-color: #1B1B2F;
+    color: #ECF0F1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #4CAF50, #00BCD4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.stButton>button {
+    background: linear-gradient(90deg, #FF8C00, #FF2D95);
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    height: 50px;
+}
+.stTextArea>div>textarea {
+    background-color: #2C3E50;
+    color: #ECF0F1;
+    font-size: 16px;
+    border-radius: 10px;
+}
+.output-box {
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    margin-bottom: 15px;
+}
+</style>
 """, unsafe_allow_html=True)
+
+# ---------------- Page Header ----------------
+st.markdown("<h1 style='text-align:center;'>🌍 AI Translator</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:18px; color:#AAB2BD;'>Translate between multiple languages with phonetics and speech playback.</p>", unsafe_allow_html=True)
 
 # ---------------- OpenAI API Key ----------------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -60,13 +94,13 @@ if st.button("Translate"):
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
         # ---------------- Display Outputs ----------------
-        st.markdown(f"<div style='background:#2C3E50; padding:12px; border-radius:10px;'>"
-                    f"<b style='color:#FFD700;'>🌐 Translated ({target_lang}):</b><br>"
+        st.markdown(f"<div class='output-box' style='background:#34495E;'>"
+                    f"<b style='color:#FFD700; font-size:18px;'>🌐 Translated ({target_lang}):</b><br>"
                     f"<span style='color:#ECF0F1; font-size:20px;'>{translated_text}</span></div>",
                     unsafe_allow_html=True)
 
-        st.markdown(f"<div style='background:#34495E; padding:12px; border-radius:10px;'>"
-                    f"<b style='color:#00CED1;'>🔤 Phonetic:</b><br>"
+        st.markdown(f"<div class='output-box' style='background:#2C3E50;'>"
+                    f"<b style='color:#00CED1; font-size:18px;'>🔤 Phonetic:</b><br>"
                     f"<span style='color:#ECF0F1; font-size:18px;'>{phonetic_text}</span></div>",
                     unsafe_allow_html=True)
 
