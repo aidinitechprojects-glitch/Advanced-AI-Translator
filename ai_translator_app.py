@@ -23,10 +23,10 @@ textarea:focus { outline: none !important; background-color: #fff5db !important;
 .action-btn:hover { background: linear-gradient(90deg, #e56e00, #db9f2d); box-shadow: 0 10px 28px #ffb95bcc; }
 .clear-btn { background-color: #a6732cdd !important; color: #fbe9cd !important; font-size: 0.95rem; font-weight: 600; border-radius: 12px; padding: 8px 18px; border: none; cursor: pointer; transition: background-color 0.3s ease; margin-top: 14px; }
 .clear-btn:hover { background-color: #9e5c00cc !important; }
-.output-card { background: #fff9f0; border-radius: 18px; box-shadow: 0 12px 38px #ff9b2b5e; padding: 24px 20px 22px; margin-bottom: 28px; font-size: 1.05rem; color: #7a4d00; line-height: 1.5; }
+.output-card { background: #fff9f0; border-radius: 18px; box-shadow: 0 12px 38px #ff9b2b5e; padding: 24px 20px 22px; margin-bottom: 28px; font-size: 1.05rem; color: #7a4d00; line-height: 1.5; position: relative; }
 .output-title { font-weight: 700; font-size: 1.18rem; margin-bottom: 12px; color: #ff7f23; }
 .audio-title { font-size: 1.2rem; font-weight: 700; color: #ff9123; text-align: center; margin-bottom: 18px; }
-.copy-btn { background-color: #ffb338; color: #522f00; border-radius: 10px; border:none; padding:6px 14px; font-weight:600; cursor:pointer; margin-top:8px; }
+.copy-btn { background-color: #ffb338; color: #522f00; border-radius: 10px; border:none; padding:4px 10px; font-weight:600; cursor:pointer; position: absolute; top: 14px; right: 14px; }
 .copy-btn:hover { background-color:#ff9c1e; }
 @media (max-width: 720px) { .container { margin: 24px 24px 48px; padding: 28px 24px 20px; } .header-title { font-size: 2rem; } .action-btn { font-size: 1rem; } }
 </style>
@@ -105,21 +105,23 @@ if translate_clicked:
 
 # ---------- Outputs ----------
 if st.session_state.translated_text:
-    st.markdown(f'<div class="output-card"><div class="output-title">🌐 Translation</div>{st.session_state.translated_text}</div>', unsafe_allow_html=True)
-    st.button("Copy Translation", key="copy_translation", on_click=lambda: st.experimental_set_query_params(copy=st.session_state.translated_text))
+    st.markdown(f'''
+    <div class="output-card">
+        <div class="output-title">🌐 Translation</div>
+        {st.session_state.translated_text}
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.translated_text}`)">Copy</button>
+    </div>
+    ''', unsafe_allow_html=True)
 
 if st.session_state.phonetic_text:
-    st.markdown(f'<div class="output-card"><div class="output-title">🔤 Phonetic</div>{st.session_state.phonetic_text}</div>', unsafe_allow_html=True)
-    st.button("Copy Phonetic", key="copy_phonetic", on_click=lambda: st.experimental_set_query_params(copy=st.session_state.phonetic_text))
+    st.markdown(f'''
+    <div class="output-card">
+        <div class="output-title">🔤 Phonetic</div>
+        {st.session_state.phonetic_text}
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.phonetic_text}`)">Copy</button>
+    </div>
+    ''', unsafe_allow_html=True)
 
 # ---------- Audio ----------
 if st.session_state.translated_text:
-    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
-    try:
-        tts_lang = lang_map.get(st.session_state.target_lang, "en")
-        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
-        with tempfile.NamedTemporaryFile(delete=True) as fp:
-            tts.save(fp.name + ".mp3")
-            st.audio(fp.name + ".mp3", format="audio/mp3")
-    except Exception as e:
-        st.error(f"Audio playback failed: {e}")
+    st.markdown('<div class="audio-title
