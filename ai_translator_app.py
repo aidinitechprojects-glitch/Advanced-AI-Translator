@@ -92,16 +92,56 @@ with translate_col:
 # ---------- Translation ----------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-if translate_clicked:
-    if not st.session_state.text_input.strip():
-        st.warning("⚠️ Please enter text to translate.")
-    else:
-        with st.spinner("Translating…"):
-            prompt_translate = f"Translate the following text from {st.session_state.source_lang} to {st.session_state.target_lang}. ONLY provide the translated text without any explanations:\n{st.session_state.text_input}"
-            response = openai.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role":"user","content":prompt_translate}]
-            )
-            st.session_state.translated_text = response.choices[0].message.content.strip()
+if translate_clicked and st.session_state.text_input.strip():
+    with st.spinner("Translating…"):
+        # Raw translation only
+        prompt_translate = f"Translate the following text from {st.session_state.source_lang} to {st.session_state.target_lang}. ONLY output raw translation:\n{st.session_state.text_input}"
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role":"user","content":prompt_translate}]
+        )
+        st.session_state.translated_text = response.choices[0].message.content.strip()
 
-            prompt_phonetic = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text. ONLY raw output:\n{st.session
+        prompt_phonetic = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text. ONLY raw output:\n{st.session_state.translated_text}"
+        phonetic_resp = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role":"user","content":prompt_phonetic}]
+        )
+        st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
+        st.session_state.copy_feedback = ""
+
+# ---------- Output with Copy ----------
+def output_with_copy(title, text, key_suffix):
+    if text:
+        feedback = st.session_state.copy_feedback
+        container_html = f"""
+        <div class="output-card">
+            <div class="output-title">{title}</div>
+            {text}
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(`{text}`).then(() => {{
+                const fb = document.getElementById('feedback_{key_suffix}');
+                fb.style.display='inline';
+                setTimeout(()=>{{fb.style.display='none';}},1500);
+            }})">Copy</button>
+            <span id="feedback_{key_suffix}" class="copied-feedback" style="display:none;">Copied!</span>
+        </div>
+        """
+        components.html(container_html, height=150)
+
+# ---------- Show Outputs ----------
+output_with_copy("🌐 Translation", st.session_state.translated_text, "trans")
+output_with_copy("🔤 Phonetic", st.session_state.phonetic_text, "phon")
+
+# ---------- Audio Playback ----------
+if st.session_state.translated_text:
+    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
+    try:
+        tts_lang = lang_map.get(st.session_state.target_lang, "en")
+        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tts_file.name)
+        st.audio(tts_file.name, format="audio/mp3")
+    except Exception as e:
+        st.error(f"❌ Speech generation failed: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True)
