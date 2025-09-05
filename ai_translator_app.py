@@ -69,10 +69,10 @@ with col2:
 with col3:
     st.session_state.target_lang = st.selectbox("To", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
-# ---------- Input Text Area ----------
+# ---------- Input ----------
 st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=120, placeholder="Type or paste text...")
 
-# ---------- Clear + Translate Buttons ----------
+# ---------- Buttons ----------
 btn_col1, btn_col2 = st.columns([1,5])
 with btn_col1:
     if st.button("Clear", key="clear", use_container_width=True):
@@ -106,4 +106,18 @@ if translate_clicked:
 
 # ---------- Output ----------
 if st.session_state.translated_text:
-    st.markdown(f"<div class='pro-out-card'><span class='pro-out-title'>🌐
+    st.markdown(f"<div class='pro-out-card'><span class='pro-out-title'>🌐 Translation</span><div class='pro-out'>{st.session_state.translated_text}</div></div>", unsafe_allow_html=True)
+
+if st.session_state.phonetic_text:
+    st.markdown(f"<div class='pro-out-card'><span class='pro-out-title'>🔤 Phonetic</span><div class='pro-out'>{st.session_state.phonetic_text}</div></div>", unsafe_allow_html=True)
+
+if st.session_state.translated_text:
+    st.markdown('<div class="audio-title">🔊 Audio</div>', unsafe_allow_html=True)
+    try:
+        tts_lang = lang_map.get(st.session_state.target_lang, "en")
+        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tts_file.name)
+        st.audio(tts_file.name, format="audio/mp3")
+    except Exception as e:
+        st.error(f"❌ Speech generation
