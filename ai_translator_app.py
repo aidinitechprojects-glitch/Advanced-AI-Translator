@@ -46,15 +46,12 @@ textarea:focus {outline:none !important;background-color:#fff5db !important;bord
 """, unsafe_allow_html=True)
 
 # ---------- Session State ----------
-if "source_lang" not in st.session_state: st.session_state.source_lang = "English"
-if "target_lang" not in st.session_state: st.session_state.target_lang = "Hindi"
-if "text_input" not in st.session_state: st.session_state.text_input = ""
-if "translated_text" not in st.session_state: st.session_state.translated_text = ""
-if "phonetic_text" not in st.session_state: st.session_state.phonetic_text = ""
-if "copy_feedback" not in st.session_state: st.session_state.copy_feedback = ""
+for key in ["source_lang", "target_lang", "text_input", "translated_text", "phonetic_text", "copy_feedback"]:
+    if key not in st.session_state:
+        st.session_state[key] = ""
 
 # ---------- Header ----------
-st.markdown(f"""
+st.markdown("""
 <div class="header">
     <div class="header-title">AI Translator Pro</div>
     <div class="header-badge">PRO</div>
@@ -72,48 +69,76 @@ lang_map = {
     "Marathi": "mr", "Punjabi": "pa", "Bengali": "bn", "Urdu": "ur", "Odia": "or"
 }
 sorted_langs = sorted(lang_map.keys())
-
-col1, col_swap, col3 = st.columns([3.7, 0.5, 3.7])
+col1, col_swap, col3 = st.columns([3.7,0.5,3.7])
 with col1:
     st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
 with col_swap:
-    if st.button("⇆", key="swap", help="Swap languages"):
+    if st.button("⇆"):
         st.session_state.source_lang, st.session_state.target_lang = st.session_state.target_lang, st.session_state.source_lang
         st.experimental_rerun()
 with col3:
     st.session_state.target_lang = st.selectbox("To", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
 # ---------- Text Input ----------
-st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=100, placeholder="Type or paste your text here...")
+st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=100, placeholder="Type or paste text here...")
 
 # ---------- Action Buttons ----------
-clear_col, translate_col = st.columns([1, 5])
+clear_col, translate_col = st.columns([1,5])
 with clear_col:
-    if st.button("Clear", key="clear", use_container_width=True):
+    if st.button("Clear"):
         st.session_state.text_input = ""
         st.session_state.translated_text = ""
         st.session_state.phonetic_text = ""
         st.session_state.copy_feedback = ""
         st.experimental_rerun()
 with translate_col:
-    translate_clicked = st.button("Translate", key="translate", use_container_width=True)
+    translate_clicked = st.button("Translate")
 
 # ---------- Translation Logic ----------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 if translate_clicked and st.session_state.text_input.strip():
     with st.spinner("Translating…"):
-        # Translate
         translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}. ONLY raw output:\n{st.session_state.text_input}"
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": translate_prompt}]
+            messages=[{"role":"user","content":translate_prompt}]
         )
         st.session_state.translated_text = response.choices[0].message.content.strip()
 
-        # Phonetic
         phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text. ONLY raw output:\n{st.session_state.translated_text}"
         phonetic_resp = openai.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": phonetic_prompt}]
+            messages=[{"role":"user","content":phonetic_prompt}]
         )
-        st.session_state.phonetic_text = phonetic
+        st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
+
+# ---------- Output Function ----------
+def output_box(title, text):
+    if text:
+        container = f"""
+        <div class="output-box">
+            <div class="output-title">{title}</div>
+            <div id="output-text">{text}</div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('{text.replace("'", "\\'")}').then(()=>{{document.getElementById('copied-feedback').style.display='inline';}})">Copy</button>
+            <span id="copied-feedback" class="copied-feedback" style="display:none;">Copied!</span>
+        </div>
+        """
+        st.markdown(container, unsafe_allow_html=True)
+
+# ---------- Display Outputs ----------
+output_box("🌐 Translation", st.session_state.translated_text)
+output_box("🔤 Phonetic", st.session_state.phonetic_text)
+
+# ---------- Audio ----------
+if st.session_state.translated_text:
+    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
+    try:
+        tts_lang = lang_map.get(st.session_state.target_lang, "en")
+        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tts_file.name)
+        st.audio(tts_file.name, format="audio/mp3")
+    except Exception as e:
+        st.error(f"❌ Speech generation failed: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True)
