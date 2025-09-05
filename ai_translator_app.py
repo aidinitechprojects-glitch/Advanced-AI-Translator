@@ -4,22 +4,28 @@ import openai
 import tempfile
 
 # ---------------- Streamlit Page Config ----------------
-st.set_page_config(page_title="🌍 AI Translator", page_icon="🌐", layout="centered")
+st.set_page_config(page_title="🌍 AI Translator", page_icon="🤖", layout="centered")
 
 # ---------------- Custom CSS for modern UI ----------------
 st.markdown("""
 <style>
 body {
-    background-color: #1B1B2F;
+    background-color: #121212;
     color: #ECF0F1;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 h1 {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 2.5rem;
-    background: linear-gradient(90deg, #4CAF50, #00BCD4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+}
+.output-box {
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
+    margin-bottom: 20px;
 }
 .stButton>button {
     background: linear-gradient(90deg, #FF8C00, #FF2D95);
@@ -27,25 +33,26 @@ h1 {
     font-weight: bold;
     border-radius: 12px;
     height: 50px;
+    width: 100%;
 }
 .stTextArea>div>textarea {
-    background-color: #2C3E50;
+    background-color: #1E1E2F;
     color: #ECF0F1;
     font-size: 16px;
-    border-radius: 10px;
-}
-.output-box {
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-    margin-bottom: 15px;
+    border-radius: 12px;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- Page Header ----------------
-st.markdown("<h1 style='text-align:center;'>🌍 AI Translator</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:18px; color:#AAB2BD;'>Translate between multiple languages with phonetics and speech playback.</p>", unsafe_allow_html=True)
+# ---------------- Page Header with AI Logo ----------------
+st.markdown("""
+<h1 style="text-align:center;">
+    🤖 AI Translator
+</h1>
+<p style="text-align:center; font-size:18px; color:#AAB2BD;">
+Translate your text across languages with phonetics & audio playback
+</p>
+""", unsafe_allow_html=True)
 
 # ---------------- OpenAI API Key ----------------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -63,7 +70,7 @@ lang_map = {
 }
 
 # ---------------- Input Fields ----------------
-text_input = st.text_area("Enter text:", height=150)
+text_input = st.text_area("Enter your text:", height=150)
 
 col1, col2 = st.columns(2)
 with col1:
@@ -94,12 +101,12 @@ if st.button("Translate"):
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
         # ---------------- Display Outputs ----------------
-        st.markdown(f"<div class='output-box' style='background:#34495E;'>"
+        st.markdown(f"<div class='output-box' style='background: linear-gradient(135deg, #1E3C72, #2A5298);'>"
                     f"<b style='color:#FFD700; font-size:18px;'>🌐 Translated ({target_lang}):</b><br>"
                     f"<span style='color:#ECF0F1; font-size:20px;'>{translated_text}</span></div>",
                     unsafe_allow_html=True)
 
-        st.markdown(f"<div class='output-box' style='background:#2C3E50;'>"
+        st.markdown(f"<div class='output-box' style='background: linear-gradient(135deg, #6A11CB, #2575FC);'>"
                     f"<b style='color:#00CED1; font-size:18px;'>🔤 Phonetic:</b><br>"
                     f"<span style='color:#ECF0F1; font-size:18px;'>{phonetic_text}</span></div>",
                     unsafe_allow_html=True)
