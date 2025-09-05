@@ -101,13 +101,13 @@ if translate_clicked:
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": translate_prompt}]
             )
-            st.session_state.translated_text = response.choices.message.content.strip()
+            st.session_state.translated_text = response.choices[0].message.content.strip()
             phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": phonetic_prompt}]
             )
-            st.session_state.phonetic_text = phonetic_resp.choices.message.content.strip()
+            st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
 # ---------- Output (Translated, Phonetic, Audio) ----------
 if st.session_state.translated_text:
