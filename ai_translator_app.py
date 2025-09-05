@@ -4,7 +4,7 @@ import openai
 import tempfile
 
 # ---------------- Page Config ----------------
-st.set_page_config(page_title="🌍 AI Translator", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="🤖 AI Translator", page_icon="🌐", layout="centered")
 
 # ---------------- Initialize Session State ----------------
 if "source_lang" not in st.session_state:
@@ -18,53 +18,54 @@ if "translated_text" not in st.session_state:
 if "phonetic_text" not in st.session_state:
     st.session_state.phonetic_text = ""
 
-# ---------------- Custom CSS ----------------
+# ---------------- Custom CSS (Pro UI) ----------------
 st.markdown("""
 <style>
-body {background-color: #F4F4F9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body {background-color: #F5F5F7; font-family: 'Inter', sans-serif;}
 
 /* Header */
-.app-header {text-align: center; font-size: 3rem; font-weight: 900; color: #FF6B00; margin-bottom: 5px;}
-.subtitle {text-align: center; font-size: 1.5rem; font-weight: 500; color: #555555; margin-bottom: 25px;}
+.app-header {
+    text-align:center; font-size:3rem; font-weight:900; background: linear-gradient(90deg,#FF6B00,#FF3C00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
+}
+.subtitle {text-align:center; font-size:1.5rem; font-weight:500; color: #555555; margin-bottom:25px;}
 
-/* Input text area */
+/* Glassmorphism Input/Output */
 .stTextArea>div>textarea {
-    background-color: #FFFFFF; color: #222222; font-size: 16px; border-radius: 12px; padding: 12px; max-height: 200px; overflow-y: auto;
-    transition: all 0.3s ease;
+    background: rgba(255,255,255,0.85); border-radius:20px; padding:15px; font-size:16px;
+    color:#222; max-height:200px; overflow-y:auto; border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.12); transition: all 0.3s ease;
 }
 .stTextArea>div>textarea:focus {
-    border: 2px solid #FF6B00; background-color: #FFF7EE;
+    border: 2px solid #FF6B00; background-color: #FFF8EE;
 }
 
 /* Buttons */
-.stButton>button {font-weight: bold; border-radius: 12px; cursor:pointer; transition: all 0.3s ease;}
+.stButton>button {font-weight:bold; border-radius:12px; cursor:pointer; transition: all 0.3s ease;}
 .translate-button {
-    background: linear-gradient(90deg,#FF6B00,#FF3C00); color: #FFFFFF; width: 280px; height: 55px; font-size:20px; margin:auto; display:block;
+    background: linear-gradient(90deg,#FF6B00,#FF3C00); color: #fff; width:300px; height:55px; font-size:20px; margin:auto; display:block;
+    box-shadow: 0 6px 20px rgba(255,107,0,0.5); border:none;
 }
 .translate-button:hover {
-    filter: brightness(1.2);
-    box-shadow: 0 6px 20px rgba(255,107,0,0.6);
+    filter: brightness(1.2); transform: scale(1.02); box-shadow: 0 10px 25px rgba(255,107,0,0.6);
 }
-.swap-button {background: #00BFFF; color: #FFFFFF; font-size:16px; height:40px; width:40px;}
-.clear-button {background: #555555; color: #FFFFFF; font-size:14px; height:35px; width:80px; float:right; margin-top:5px;}
+.swap-button {background:#00BFFF; color:#fff; font-size:16px; height:40px; width:40px; border-radius:50%; font-weight:bold;}
+.clear-button {background:#555555; color:#fff; font-size:14px; height:35px; width:90px; border-radius:12px; float:right; margin-top:5px;}
 
 /* Output Boxes */
 .output-box {
-    background: #FFFFFF; border-radius: 15px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
+    background: rgba(255,255,255,0.85); border-radius:20px; padding:20px; margin-bottom:15px;
+    box-shadow: 0 10px 30px rgba(31,38,135,0.12); transition: all 0.3s ease;
 }
-.output-box:hover {background-color: #FFF7EE;}
-.output-heading {font-weight: 700; font-size: 16px; color: #FF6B00; margin-bottom: 5px; font-family:'Segoe UI', Tahoma;}
-.output-text {font-size: 14px; color: #222222; max-height: 180px; overflow-y: auto; font-family:'Segoe UI', Tahoma;}
+.output-box:hover {background-color:#FFF9F0;}
+.output-heading {font-weight:700; font-size:16px; color:#FF6B00; margin-bottom:5px; font-family:'Inter', sans-serif;}
+.output-text {font-size:15px; color:#222; max-height:200px; overflow-y:auto; font-family:'Inter', sans-serif;}
 
 /* Audio Section */
-.audio-title {font-weight: 700; font-size: 16px; margin-bottom: 10px; color: #FF6B00; text-align:center;}
+.audio-title {font-weight:700; font-size:16px; margin-bottom:10px; color:#FF6B00; text-align:center;}
 
 /* Dropdown Styling */
-.css-1kyxreq .css-1n76uvr {
-    font-size: 15px;
-    color: #222222;
-}
+.css-1kyxreq .css-1n76uvr {font-size:15px; color:#222;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -86,55 +87,53 @@ lang_map = {
     "Turkish": "tr", "Dutch": "nl", "Greek": "el", "Polish": "pl",
     "Swedish": "sv",
 }
-
-# Sort languages alphabetically
 sorted_langs = sorted(lang_map.keys())
 
 # ---------------- Input Section ----------------
-st.session_state.text_input = st.text_area("Enter your text:", value=st.session_state.text_input, height=150)
+st.session_state.text_input = st.text_area("Enter your text:", value=st.session_state.text_input, height=180)
 
-# ---------------- Clear Button (Bottom Right of Input) ----------------
+# ---------------- Clear Button ----------------
 if st.button("Clear", key="clear"):
     st.session_state.text_input = ""
     st.session_state.translated_text = ""
     st.session_state.phonetic_text = ""
     st.experimental_rerun()
 
-# ---------------- Language Selection and Swap ----------------
+# ---------------- Language Selection & Swap ----------------
 col1, col2, col3 = st.columns([4,1,4])
 with col1:
     st.session_state.source_lang = st.selectbox("Input Language:", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
 with col2:
-    if st.button("⇄", key="swap", help="Swap languages"):
+    if st.button("⇆", key="swap", help="Swap languages"):
         st.session_state.source_lang, st.session_state.target_lang = st.session_state.target_lang, st.session_state.source_lang
         st.experimental_rerun()
 with col3:
     st.session_state.target_lang = st.selectbox("Output Language:", sorted_langs, index=sorted_langs.index(st.session_state.target_lang))
 
-# ---------------- Translate Button (Center, Pro UI) ----------------
-translate_clicked = st.button("Translate", key="translate")
+# ---------------- Translate Button ----------------
+translate_clicked = st.button("Translate", key="translate", help="Translate text")
 if translate_clicked:
     if st.session_state.text_input.strip() == "":
         st.warning("⚠️ Please enter some text.")
     else:
         with st.spinner("Translating..."):
             # Translation
-            translate_prompt = f"Translate the following text from {st.session_state.source_lang} to {st.session_state.target_lang}. Only provide the translated sentence:\n{st.session_state.text_input}"
+            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": translate_prompt}]
             )
             st.session_state.translated_text = response.choices[0].message.content.strip()
-
+            
             # Phonetic
-            phonetic_prompt = f"Provide only the phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
+            phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": phonetic_prompt}]
             )
             st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-# ---------------- Display Outputs ----------------
+# ---------------- Output ----------------
 if st.session_state.translated_text:
     st.markdown(f'''
     <div class="output-box">
@@ -151,7 +150,7 @@ if st.session_state.phonetic_text:
     </div>
     ''', unsafe_allow_html=True)
 
-# ---------------- Play Audio ----------------
+# ---------------- Audio Playback ----------------
 if st.session_state.translated_text:
     st.markdown('<div class="audio-title">🔊 Play Translated Audio</div>', unsafe_allow_html=True)
     try:
