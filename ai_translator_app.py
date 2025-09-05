@@ -59,8 +59,14 @@ if st.button("Translate"):
         st.warning("⚠️ Please enter some text.")
     else:
         with st.spinner("Translating..."):
-            # Translation prompt
-            translate_prompt = f"Translate the following text from {source_lang} to {target_lang}: {text_input}"
+            # Translation prompt (STRICT – only translation)
+            translate_prompt = f"""
+            Translate the following text from {source_lang} to {target_lang}.
+            Return ONLY the translated text, no explanations, no extra words.
+
+            Input: {text_input}
+            Output:
+            """
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": translate_prompt}]
@@ -68,7 +74,13 @@ if st.button("Translate"):
             translated_text = response.choices[0].message.content.strip()
 
             # Get phonetic transcription (romanized)
-            phonetic_prompt = f"Provide the phonetic (romanized) transcription of this {target_lang} text: {translated_text}"
+            phonetic_prompt = f"""
+            Provide ONLY the phonetic (romanized) transcription of this {target_lang} text.
+            No translations, no explanations. Just the phonetic string.
+
+            Text: {translated_text}
+            Phonetic:
+            """
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": phonetic_prompt}]
@@ -81,7 +93,7 @@ if st.button("Translate"):
 
         st.info(f"🔤 Phonetic: {phonetic_text}")
 
-        # Generate speech only for translated text
+        # Generate speech only for clean translated text
         try:
             tts_lang = lang_map.get(target_lang, "en")
             tts = gTTS(text=translated_text, lang=tts_lang)
