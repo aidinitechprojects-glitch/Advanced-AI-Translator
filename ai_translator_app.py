@@ -10,7 +10,7 @@ st.set_page_config(page_title="🌍 AI Translator", page_icon="🤖", layout="ce
 st.markdown("""
 <style>
 body {
-    background: #0F0F1F;
+    background-color: #0F0F1F;
     color: #ECF0F1;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -18,28 +18,27 @@ body {
 /* Header */
 .app-header {
     text-align: center;
-    font-size: 3rem;
-    font-weight: 900;
+    font-size: 2.5rem;
+    font-weight: 800;
     color: #FF6B00;
     margin-bottom: 5px;
-    font-family: 'Lucida Console', Courier, monospace;
 }
 
 /* Subtitle */
 .subtitle {
     text-align: center;
-    font-size: 1.3rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 500;
     color: #FFFFFF;
     margin-bottom: 20px;
 }
 
-/* Text Area with Scroll */
+/* Text Area */
 .stTextArea>div>textarea {
     background-color: #1E1E2F;
     color: #ECF0F1;
     font-size: 16px;
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 10px;
     max-height: 200px;
     overflow-y: auto;
@@ -50,26 +49,22 @@ body {
     background: #FF6B00;
     color: #FFFFFF;
     font-weight: bold;
-    border-radius: 12px;
+    border-radius: 10px;
     height: 40px;
     width: 100%;
     font-size: 16px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-    transition: all 0.2s ease;
-}
-.stButton>button:hover {
-    transform: scale(1.05);
 }
 
-/* Swap Button smaller */
+/* Swap Button */
 .swap-button {
     background: #FF1D75;
     color: #FFFFFF;
     font-size: 14px;
     height: 35px;
+    margin-top: 23px;
 }
 
-/* Clear Button smaller */
+/* Clear Button */
 .clear-button {
     background: #555555;
     color: #FFFFFF;
@@ -82,41 +77,32 @@ body {
 
 /* Output Boxes */
 .output-box {
-    backdrop-filter: blur(10px);
-    background: rgba(255,255,255,0.05);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0px 8px 30px rgba(0,0,0,0.6);
-    margin-bottom: 20px;
+    background: #1E1E2F;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
 }
 
 /* Output Headings */
 .output-heading {
     font-weight: 700;
-    font-size: 20px;
+    font-size: 16px;
     color: #FF6B00;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 /* Output Text */
 .output-text {
-    font-size: 18px;
+    font-size: 14px;
     color: #ECF0F1;
     max-height: 150px;
     overflow-y: auto;
 }
 
-/* Copy Buttons */
-.copy-button {
-    font-size: 14px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-}
-
 /* Audio Title */
 .audio-title {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     margin-bottom: 10px;
     color: #FF6B00;
 }
@@ -145,28 +131,26 @@ lang_map = {
 # ---------------- Input Section ----------------
 text_input = st.text_area("Enter your text:", height=150)
 
-col1, col2, col3 = st.columns([1,1,0.3])
+# ---------------- Language Select with Swap ----------------
+col1, col2, col3 = st.columns([1,0.2,1])
 with col1:
     source_lang = st.selectbox("Input Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("English"))
-with col2:
-    target_lang = st.selectbox("Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 with col3:
-    if st.button("🔄 Swap", key="swap", help="Swap languages and input text"):
-        # Swap languages
+    target_lang = st.selectbox("Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
+with col2:
+    if st.button("🔄", key="swap", help="Swap languages"):
         source_lang, target_lang = target_lang, source_lang
-        # Swap text input with translated output if available
-        try:
-            text_input, translated_text = translated_text, text_input
-        except NameError:
-            pass
         st.experimental_rerun()
 
-# ---------------- Clear Button under Input Box ----------------
-clear_col1, clear_col2 = st.columns([0.85,0.15])
-with clear_col2:
-    if st.button("Clear", key="clear", help="Clear input text"):
-        text_input = ""
-        st.experimental_rerun()
+# ---------------- Clear Button ----------------
+if st.button("Clear", key="clear", help="Clear input and outputs"):
+    text_input = ""
+    try:
+        translated_text = ""
+        phonetic_text = ""
+    except:
+        pass
+    st.experimental_rerun()
 
 # ---------------- Translate ----------------
 if st.button("Translate"):
@@ -191,23 +175,16 @@ if st.button("Translate"):
             phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
         # ---------------- Display Outputs ----------------
-        # Translated text with copy
         st.markdown('<div class="output-box">'
                     '<div class="output-heading">🌐 Translated ({})</div>'
                     '<div class="output-text">{}</div></div>'.format(target_lang, translated_text),
                     unsafe_allow_html=True)
-        if st.button("📋 Copy Translated", key="copy1"):
-            st.experimental_set_clipboard(translated_text)
 
-        # Phonetic with copy
         st.markdown('<div class="output-box">'
                     '<div class="output-heading">🔤 Phonetic</div>'
                     '<div class="output-text">{}</div></div>'.format(phonetic_text),
                     unsafe_allow_html=True)
-        if st.button("📋 Copy Phonetic", key="copy2"):
-            st.experimental_set_clipboard(phonetic_text)
 
-        # Audio playback with title
         st.markdown('<div class="audio-title">🔊 Play Translated Audio</div>', unsafe_allow_html=True)
         try:
             tts_lang = lang_map.get(target_lang, "en")
