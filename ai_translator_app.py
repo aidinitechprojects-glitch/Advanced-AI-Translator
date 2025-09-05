@@ -7,31 +7,22 @@ from st_mic_recorder import mic_recorder
 # ---------------- Streamlit Page Config ----------------
 st.set_page_config(page_title="🎤 AI Voice Translator", page_icon="🌍", layout="centered")
 
-st.markdown(
-    """
-    <h1 style="text-align:center; color:#4CAF50;">🌍 AI Voice Translator</h1>
-    <p style="text-align:center; font-size:18px; color:#888;">
-        Speak in your language → Instant translation with phonetics & audio
-    </p>
-    """,
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<h1 style="text-align:center; color:#4CAF50;">🌍 AI Voice Translator</h1>
+<p style="text-align:center; font-size:18px; color:#888;">
+Speak in your language → Instant translation with phonetics & audio
+</p>
+""", unsafe_allow_html=True)
 
 # ---------------- OpenAI API Key ----------------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # ---------------- Supported Languages ----------------
 lang_map = {
-    # Indian
-    "Hindi": "hi", "Tamil": "ta", "Telugu": "te", "Kannada": "kn",
-    "Malayalam": "ml", "Gujarati": "gu", "Marathi": "mr", "Punjabi": "pa",
-    "Bengali": "bn", "Urdu": "ur", "Odia": "or",
-    # Foreign
-    "English": "en", "French": "fr", "Spanish": "es", "German": "de",
-    "Italian": "it", "Portuguese": "pt", "Russian": "ru", "Japanese": "ja",
-    "Korean": "ko", "Chinese (Mandarin)": "zh-cn", "Arabic": "ar",
-    "Turkish": "tr", "Dutch": "nl", "Greek": "el", "Polish": "pl",
-    "Swedish": "sv",
+    "English": "en", "Hindi": "hi", "Tamil": "ta", "Telugu": "te",
+    "Kannada": "kn", "Malayalam": "ml", "French": "fr",
+    "Spanish": "es", "German": "de", "Japanese": "ja",
+    "Chinese (Mandarin)": "zh-cn"
 }
 
 # ---------------- Language Selection ----------------
@@ -52,7 +43,7 @@ voice_input = mic_recorder(
 
 # ---------------- Process transcription & translation ----------------
 if voice_input:
-    # Use raw bytes as temporary audio file
+    # Save raw bytes to temporary WAV
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_wav:
         tmp_wav.write(voice_input["bytes"])
         wav_path = tmp_wav.name
@@ -66,18 +57,24 @@ if voice_input:
             )
         transcribed_text = transcript.text.strip()
 
-        # Display transcription
-        st.markdown(f"<div style='background:#1E1E1E; padding:12px; border-radius:10px;'><b style='color:#00FFAA;'>📝 Transcribed:</b><br><span style='color:white; font-size:18px;'>{transcribed_text}</span></div>", unsafe_allow_html=True)
+        # Transcribed text
+        st.markdown(f"<div style='background:#1E1E1E; padding:12px; border-radius:10px;'>"
+                    f"<b style='color:#00FFAA;'>📝 Transcribed:</b><br>"
+                    f"<span style='color:white; font-size:18px;'>{transcribed_text}</span></div>",
+                    unsafe_allow_html=True)
 
         # Translation
-        translate_prompt = f"Translate the following text from {source_lang} to {target_lang}. Only provide the translated sentence:\n{transcribed_text}"
+        translate_prompt = f"Translate the following {source_lang} text to {target_lang}. Only provide the translated sentence:\n{transcribed_text}"
         translation_resp = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": translate_prompt}]
         )
         translated_text = translation_resp.choices[0].message.content.strip()
 
-        st.markdown(f"<div style='background:#2C2C54; padding:12px; border-radius:10px;'><b style='color:#FFD700;'>🌐 Translated ({target_lang}):</b><br><span style='color:#FFFFFF; font-size:20px;'>{translated_text}</span></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background:#2C2C54; padding:12px; border-radius:10px;'>"
+                    f"<b style='color:#FFD700;'>🌐 Translated ({target_lang}):</b><br>"
+                    f"<span style='color:#FFFFFF; font-size:20px;'>{translated_text}</span></div>",
+                    unsafe_allow_html=True)
 
         # Phonetic
         phonetic_prompt = f"Provide only the phonetic (romanized) transcription of this {target_lang} text:\n{translated_text}"
@@ -87,7 +84,10 @@ if voice_input:
         )
         phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
-        st.markdown(f"<div style='background:#34495E; padding:12px; border-radius:10px;'><b style='color:#00CED1;'>🔤 Phonetic:</b><br><span style='color:#ECF0F1; font-size:18px;'>{phonetic_text}</span></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background:#34495E; padding:12px; border-radius:10px;'>"
+                    f"<b style='color:#00CED1;'>🔤 Phonetic:</b><br>"
+                    f"<span style='color:#ECF0F1; font-size:18px;'>{phonetic_text}</span></div>",
+                    unsafe_allow_html=True)
 
         # Audio
         try:
