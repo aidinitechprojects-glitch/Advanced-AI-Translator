@@ -29,7 +29,6 @@ textarea:focus {outline:none !important; background-color:#fff5db !important; bo
 .output-title {font-weight:700; font-size:1.15rem; margin-bottom:10px; color:#ff7f23;}
 .audio-title {font-size:1.18rem; font-weight:700; color:#ff9123; text-align:center; margin-bottom:14px;}
 .copy-btn {position:absolute; top:16px; right:16px; background:#ff7f23; color:white; border:none; border-radius:6px; padding:4px 10px; font-size:0.85rem; cursor:pointer;}
-@media (max-width:720px) {.container {margin:24px 24px 40px; padding:28px 24px 20px;} .header-title{font-size:2rem;} .action-btn{font-size:1rem;}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -64,7 +63,7 @@ col1, col_swap, col3 = st.columns([3.5, 0.5, 3.5])
 with col1:
     st.session_state.source_lang = st.selectbox("From", sorted_langs, index=sorted_langs.index(st.session_state.source_lang))
 with col_swap:
-    if st.button("⇆", key="swap", help="Swap languages"):
+    if st.button("⇆", key="swap"):
         st.session_state.source_lang, st.session_state.target_lang = st.session_state.target_lang, st.session_state.source_lang
         st.experimental_rerun()
 with col3:
@@ -74,15 +73,15 @@ with col3:
 st.session_state.text_input = st.text_area("Text to translate", value=st.session_state.text_input, height=100, placeholder="Type or paste your text here...")
 
 # ---------- Buttons ----------
-clear_col, translate_col = st.columns([1, 5])
+clear_col, translate_col = st.columns([1,5])
 with clear_col:
-    if st.button("Clear", key="clear", help="Clear input", use_container_width=True):
+    if st.button("Clear", key="clear"):
         st.session_state.text_input = ""
         st.session_state.translated_text = ""
         st.session_state.phonetic_text = ""
         st.experimental_rerun()
 with translate_col:
-    translate_clicked = st.button("Translate", key="translate", help="Translate text", use_container_width=True)
+    translate_clicked = st.button("Translate", key="translate")
 
 # ---------- Translation ----------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -101,4 +100,38 @@ if translate_clicked:
             phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text without explanations:\n{st.session_state.translated_text}"
             phonetic_resp = openai.chat.completions.create(
                 model="gpt-4o-mini",
-               
+                messages=[{"role": "user", "content": phonetic_prompt}]
+            )
+            st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
+
+# ---------- Helper: Output with Copy ----------
+def output_with_copy(title, text):
+    if text:
+        component_code = f"""
+        <div class="output-card">
+            <div class="output-title">{title}</div>
+            <textarea id="{title}" readonly style="width:100%;height:80px;border:none;background:#fff9f0;">{text}</textarea>
+            <button class="copy-btn" onclick="
+            navigator.clipboard.writeText(document.getElementById('{title}').value).then(()=>{{alert('Copied to clipboard!');}});
+            ">Copy</button>
+        </div>
+        """
+        components.html(component_code, height=140)
+
+# ---------- Display Outputs ----------
+output_with_copy("🌐 Translation", st.session_state.translated_text)
+output_with_copy("🔤 Phonetic", st.session_state.phonetic_text)
+
+# ---------- Audio ----------
+if st.session_state.translated_text:
+    st.markdown('<div class="audio-title">🔊 Audio Playback</div>', unsafe_allow_html=True)
+    try:
+        tts_lang = lang_map.get(st.session_state.target_lang, "en")
+        tts = gTTS(text=st.session_state.translated_text, lang=tts_lang)
+        tts_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(tts_file.name)
+        st.audio(tts_file.name, format="audio/mp3")
+    except Exception as e:
+        st.error(f"❌ Speech generation failed: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True)
