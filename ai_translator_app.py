@@ -85,10 +85,10 @@ if translate_clicked:
         st.warning("⚠️ Please enter text to translate.")
     else:
         with st.spinner("Translating…"):
-            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang}:\n{st.session_state.text_input}"
+            translate_prompt = f"Translate this text from {st.session_state.source_lang} to {st.session_state.target_lang} and provide only raw translated text, no explanations:\n{st.session_state.text_input}"
             response = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role":"user","content":translate_prompt}])
             st.session_state.translated_text = response.choices[0].message.content.strip()
-            phonetic_prompt = f"Provide phonetic (romanized) transcription of this {st.session_state.target_lang} text:\n{st.session_state.translated_text}"
+            phonetic_prompt = f"Provide phonetic (romanized) transcription of this text without extra explanation:\n{st.session_state.translated_text}"
             phonetic_resp = openai.chat.completions.create(model="gpt-4o-mini", messages=[{"role":"user","content":phonetic_prompt}])
             st.session_state.phonetic_text = phonetic_resp.choices[0].message.content.strip()
 
@@ -98,7 +98,7 @@ if st.session_state.translated_text:
     <div class="output-card">
         <div class="output-title">🌐 Translation</div>
         {st.session_state.translated_text}
-        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.translated_text}`).then(()=>alert('✅ Translation copied!'));">Copy</button>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.translated_text}`).then(()=>{{alert('✅ Translation copied!')}})">Copy</button>
     </div>
     ''', unsafe_allow_html=True)
 if st.session_state.phonetic_text:
@@ -106,7 +106,7 @@ if st.session_state.phonetic_text:
     <div class="output-card">
         <div class="output-title">🔤 Phonetic</div>
         {st.session_state.phonetic_text}
-        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.phonetic_text}`).then(()=>alert('✅ Phonetic copied!'));">Copy</button>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(`{st.session_state.phonetic_text}`).then(()=>{{alert('✅ Phonetic copied!')}})">Copy</button>
     </div>
     ''', unsafe_allow_html=True)
 
