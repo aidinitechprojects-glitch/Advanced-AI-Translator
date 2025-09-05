@@ -3,7 +3,7 @@ from gtts import gTTS
 import openai
 import tempfile
 
-# ---------------- Streamlit Page Config ----------------
+# ---------------- Page Config ----------------
 st.set_page_config(page_title="🌍 AI Translator", page_icon="🤖", layout="centered")
 
 # ---------------- Custom CSS ----------------
@@ -46,13 +46,17 @@ body {
 
 /* Buttons */
 .stButton>button {
-    background: #FF6B00;
-    color: #FFFFFF;
     font-weight: bold;
     border-radius: 10px;
     height: 40px;
-    width: 100%;
     font-size: 16px;
+}
+
+/* Translate Button */
+.translate-button {
+    background: #FF6B00;
+    color: #FFFFFF;
+    width: 100%;
 }
 
 /* Swap Button */
@@ -70,7 +74,7 @@ body {
     color: #FFFFFF;
     font-size: 14px;
     height: 30px;
-    width: 100px;
+    width: 90px;
     float: right;
     margin-top: 5px;
 }
@@ -131,16 +135,16 @@ lang_map = {
 # ---------------- Input Section ----------------
 text_input = st.text_area("Enter your text:", height=150)
 
-# ---------------- Language Select with Swap ----------------
-col1, col2, col3 = st.columns([1,0.2,1])
+# ---------------- Languages with Swap ----------------
+col1, col2, col3 = st.columns([4,1,4])
 with col1:
     source_lang = st.selectbox("Input Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("English"))
-with col3:
-    target_lang = st.selectbox("Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 with col2:
     if st.button("🔄", key="swap", help="Swap languages"):
         source_lang, target_lang = target_lang, source_lang
         st.experimental_rerun()
+with col3:
+    target_lang = st.selectbox("Output Language:", list(lang_map.keys()), index=list(lang_map.keys()).index("Hindi"))
 
 # ---------------- Clear Button ----------------
 if st.button("Clear", key="clear", help="Clear input and outputs"):
@@ -153,7 +157,7 @@ if st.button("Clear", key="clear", help="Clear input and outputs"):
     st.experimental_rerun()
 
 # ---------------- Translate ----------------
-if st.button("Translate"):
+if st.button("Translate", key="translate"):
     if text_input.strip() == "":
         st.warning("⚠️ Please enter some text.")
     else:
